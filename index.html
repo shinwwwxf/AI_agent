@@ -48,6 +48,12 @@
           <span class="nav-label">輕音樂電台</span>
         </button>
       </li>
+      <li>
+        <button class="nav-item" data-target="panel-history" id="nav-history-btn">
+          <span class="nav-icon">05</span>
+          <span class="nav-label">歷史紀錄表</span>
+        </button>
+      </li>
     </ul>
 
     <div class="sidebar-foot">
@@ -178,6 +184,31 @@
       <div class="music-player">
         <div id="yt-player-wrap"></div>
       </div>
+    </section>
+
+    <!-- 5. 歷史紀錄表 (拆分月份與日期雙選單) -->
+    <section id="panel-history" class="panel">
+      <header class="panel-head">
+        <div>
+          <h1>歷史學習紀錄表</h1>
+          <p class="sub">回溯每日單字測驗的第一輪原始對錯、星期與學習花費總時間</p>
+        </div>
+        <div class="filter-area" style="margin-top: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
+          <div>
+            <label for="history-month-select" style="font-size: 0.9rem; color: #aaa; margin-right: 8px;">月份：</label>
+            <select id="history-month-select" style="background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-family: inherit; cursor: pointer; min-width: 120px;">
+              <!-- JS 動態生成 -->
+            </select>
+          </div>
+          <div>
+            <label for="history-date-select" style="font-size: 0.9rem; color: #aaa; margin-right: 8px;">日期：</label>
+            <select id="history-date-select" style="background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-family: inherit; cursor: pointer; min-width: 180px;">
+              <!-- JS 連動生成 -->
+            </select>
+          </div>
+        </div>
+      </header>
+      <div id="history-page-container"></div>
     </section>
 
   </main>
