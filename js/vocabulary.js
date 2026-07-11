@@ -1,8 +1,15 @@
 /* ===========================================================
    vocabulary.js
-   負責：讀取 data/ielts7000.json，依「今天日期」決定要教哪 10 個單字
+   負責：讀取 data/ielts7000.js 內的 IELTS_WORDS 陣列，依「今天日期」
+         決定要教哪 10 個單字。
    規則：把整份單字庫切成每 10 個一組，用「從某個起始日算起的天數」
          對「組數」取餘數，達到「每天不同、循環復習」的效果。
+
+   注意：資料來源改用 <script src="data/ielts7000.js"> 直接載入的
+   全域變數 IELTS_WORDS，而不是 fetch('data/ielts7000.json')。
+   這是因為使用者若用「直接雙擊 index.html」開啟（file:// 協定），
+   瀏覽器會基於安全性擋掉 fetch 讀取本地檔案，畫面就會整個空白。
+   改成 <script> 標籤載入就不受此限制，雙擊即可正常運作。
 =========================================================== */
 
 const Vocabulary = (() => {
@@ -13,8 +20,7 @@ const Vocabulary = (() => {
   const EPOCH = new Date('2025-01-01T00:00:00');
 
   async function load() {
-    const res = await fetch('data/ielts7000.json');
-    wordBank = await res.json();
+    wordBank = (typeof IELTS_WORDS !== 'undefined') ? IELTS_WORDS : [];
     return computeToday();
   }
 
