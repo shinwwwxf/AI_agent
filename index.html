@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 管家 | AI Butler</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23E8A33D%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- 側邊導覽列 -->
+  <nav class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-glow"></span>
+      <div class="brand-text">
+        <strong>AI 管家</strong>
+        <small>your desk companion</small>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li>
+        <button class="nav-item active" data-target="panel-vocab">
+          <span class="nav-icon">01</span>
+          <span class="nav-label">單字學習</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-item" data-target="panel-reminder">
+          <span class="nav-icon">02</span>
+          <span class="nav-label">起身提醒</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-item" data-target="panel-exchange">
+          <span class="nav-icon">03</span>
+          <span class="nav-label">即時匯率</span>
+        </button>
+      </li>
+      <li>
+        <button class="nav-item" data-target="panel-music">
+          <span class="nav-icon">04</span>
+          <span class="nav-label">輕音樂電台</span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="sidebar-foot">
+      <span id="clock-display">--:--:--</span>
+      <span id="date-display">----/--/--</span>
+    </div>
+  </nav>
+
+  <!-- 主內容區 -->
+  <main class="content">
+
+    <!-- 1. 單字學習 + 測驗 -->
+    <section id="panel-vocab" class="panel active">
+      <header class="panel-head">
+        <div>
+          <h1>每日 10 單字</h1>
+          <p class="sub">雅思 7000 必背單字庫，每天自動輪替不重複</p>
+        </div>
+        <div class="day-badge" id="vocab-day-badge">Day 1</div>
+      </header>
+
+      <div id="vocab-learn-view">
+        <div class="card-grid" id="vocab-cards"></div>
+        <div class="panel-actions">
+          <button class="btn primary" id="start-quiz-btn">開始今日測驗 →</button>
+        </div>
+      </div>
+
+      <div id="vocab-quiz-view" class="hidden">
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+        </div>
+        <div class="quiz-card" id="quiz-card"></div>
+      </div>
+
+      <div id="vocab-result-view" class="hidden">
+        <div class="result-card">
+          <h2>今日成績</h2>
+          <div class="score-ring" id="score-ring">
+            <span id="score-text">0/10</span>
+          </div>
+          <p id="result-message" class="sub"></p>
+          <button class="btn ghost" id="retry-quiz-btn">重新測驗</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 起身提醒 -->
+    <section id="panel-reminder" class="panel">
+      <header class="panel-head">
+        <div>
+          <h1>起身提醒</h1>
+          <p class="sub">工作每 40 分鐘提醒起來動一動 5 分鐘</p>
+        </div>
+        <div class="reminder-status" id="reminder-status-badge">未啟動</div>
+      </header>
+
+      <div class="reminder-grid">
+        <div class="reminder-panel">
+          <div class="big-timer" id="reminder-big-timer">40:00</div>
+          <div class="timer-label" id="reminder-timer-label">下一次提醒倒數</div>
+          <div class="panel-actions">
+            <button class="btn primary" id="reminder-toggle-btn">啟動提醒</button>
+            <button class="btn ghost" id="reminder-test-btn">測試提示音</button>
+          </div>
+        </div>
+
+        <div class="reminder-config">
+          <h3>工作時段設定</h3>
+          <div class="config-row">
+            <label>上午時段</label>
+            <input type="time" id="morning-start" value="09:30">
+            <span>–</span>
+            <input type="time" id="morning-end" value="11:30">
+          </div>
+          <div class="config-row">
+            <label>下午時段</label>
+            <input type="time" id="afternoon-start" value="13:30">
+            <span>–</span>
+            <input type="time" id="afternoon-end" value="17:30">
+          </div>
+          <div class="config-row">
+            <label>提醒間隔</label>
+            <input type="number" id="interval-minutes" value="40" min="5" max="120" step="5"> 分鐘
+          </div>
+          <div class="config-row">
+            <label>運動時長</label>
+            <input type="number" id="exercise-minutes" value="5" min="1" max="30" step="1"> 分鐘
+          </div>
+          <p class="hint">⚠️ 此為網頁計時，請保持分頁開啟才能持續提醒。</p>
+        </div>
+      </div>
+
+      <div class="reminder-log">
+        <h3>今日提醒紀錄</h3>
+        <ul id="reminder-log-list"><li class="empty">尚無紀錄</li></ul>
+      </div>
+    </section>
+
+    <!-- 3. 即時匯率 -->
+    <section id="panel-exchange" class="panel">
+      <header class="panel-head">
+        <div>
+          <h1>即時匯率</h1>
+          <p class="sub">USD／CAD／CNY／AUD 兌新台幣（TWD）</p>
+        </div>
+        <button class="btn ghost small" id="refresh-rate-btn">🔄 更新</button>
+      </header>
+
+      <div class="rate-grid" id="rate-grid">
+        <div class="rate-card loading"><div class="spinner"></div>載入中...</div>
+      </div>
+
+      <p class="rate-updated" id="rate-updated-time"></p>
+    </section>
+
+    <!-- 4. 輕音樂電台 -->
+    <section id="panel-music" class="panel">
+      <header class="panel-head">
+        <div>
+          <h1>輕音樂電台</h1>
+          <p class="sub">幾個適合上班專注的輕音樂 / Lo-fi 頻道</p>
+        </div>
+      </header>
+
+      <div class="music-picker" id="music-picker"></div>
+
+      <div class="music-player">
+        <div id="yt-player-wrap"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/vocabulary.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/exchange.js"></script>
+<script src="js/reminder.js"></script>
+<script src="js/music.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
