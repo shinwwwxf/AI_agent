@@ -1,110 +1,153 @@
-/* ===========================================================
-   script.js — App 進入點
-   負責：導覽列切換、時鐘顯示、連結各功能模組與獨立渲染歷史紀錄頁面（支援月份與日期分離篩選、學習總時長、星期顯示）。
-=========================================================== */
-
 document.addEventListener('DOMContentLoaded', async () => {
   initNav();
   initClock();
 
-  // ---- 1. 單字學習與計時核心 ----
+  // 自訂 Toast 元件（代替原生 alert，安全、不卡死執行緒且精美）
+  const showToast = (message, isError = false) => {
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.bottom = '30px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+    toast.style.opacity = '0';
+    toast.style.backgroundColor = isError ? '#ff5f56' : '#e8a33d';
+    toast.style.color = isError ? '#fff' : '#121212';
+    toast.style.padding = '12px 28px';
+    toast.style.borderRadius = '10px';
+    toast.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
+    toast.style.zIndex = '99999';
+    toast.style.fontSize = '0.95rem';
+    toast.style.fontWeight = '600';
+    toast.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+    
+    // 強制重繪觸發動畫
+    setTimeout(() => {
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+      toast.style.opacity = '1';
+    }, 50);
+
+    setTimeout(() => {
+      toast.style.transform = 'translateX(-50%) translateY(-20px)';
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  };
+
   const vocabData = await Vocabulary.load();
   const words = vocabData.words;
   const dateKey = vocabData.dateKey;
   const dayName = vocabData.dayName;
 
-  // 記錄開始讀單字的時間點（App 打開即開始計時）
+  // 打開卡片那一刻，即刻啟動計時
   let studyStartTime = new Date();
 
+  // 設定週五複習介面或平日學習介面標題
+  const badgeEl = document.getElementById('vocab-day-badge');
+  const subTitleEl = document.querySelector('#panel-vocab .panel-head p.sub');
+  
   if (vocabData.isFriday) {
-    document.getElementById('vocab-day-badge').textContent = `週五錯題總複習`;
-    document.querySelector('#panel-vocab .panel-head p.sub').textContent = `今天不抽新單字！系統已自動彙整本週一到週四答錯的單字進行特訓！`;
+    if (badgeEl) badgeEl.textContent = `週五錯題總複習`;
+    if (subTitleEl) subTitleEl.textContent = `今天不抽新單字！系統已自動彙整本週一到週四答錯的單字進行特訓！`;
   } else {
-    document.getElementById('vocab-day-badge').textContent = `${dayName}單字`;
+    if (badgeEl) badgeEl.textContent = `${dayName}單字`;
   }
 
+  // 渲染今日單字卡片
   Vocabulary.renderCards(document.getElementById('vocab-cards'));
 
-  // 開始今日測驗
-  document.getElementById('start-quiz-btn').addEventListener('click', () => {
-    if (words.length === 0) {
-      alert("今天沒有需要測驗的單字唷！");
-      return;
-    }
-    document.getElementById('vocab-learn-view').classList.add('hidden');
-    document.getElementById('vocab-result-view').classList.add('hidden');
-    document.getElementById('vocab-quiz-view').classList.remove('hidden');
-    Quiz.build(words, Vocabulary.getFullBank());
-    Quiz.start(onQuizFinish);
-  });
+  const startQuizBtn = document.getElementById('start-quiz-btn');
+  if (startQuizBtn) {
+    startQuizBtn.addEventListener('click', () => {
+      if (words.length === 0) {
+        showToast("今天沒有需要測驗的單字唷！", false);
+        return;
+      }
+      document.getElementById('vocab-learn-view').classList.add('hidden');
+      document.getElementById('vocab-result-view').classList.add('hidden');
+      document.getElementById('vocab-quiz-view').classList.remove('hidden');
+      Quiz.build(words, Vocabulary.getFullBank());
+      Quiz.start(onQuizFinish);
+    });
+  }
 
-  // 重新測驗：時間計時重新歸零算起
-  document.getElementById('retry-quiz-btn').addEventListener('click', () => {
-    studyStartTime = new Date(); // 重新計時
-    document.getElementById('vocab-result-view').classList.add('hidden');
-    document.getElementById('vocab-quiz-view').classList.remove('hidden');
-    Quiz.build(words, Vocabulary.getFullBank());
-    Quiz.start(onQuizFinish);
-  });
+  const retryQuizBtn = document.getElementById('retry-quiz-btn');
+  if (retryQuizBtn) {
+    retryQuizBtn.addEventListener('click', () => {
+      studyStartTime = new Date(); 
+      document.getElementById('vocab-result-view').classList.add('hidden');
+      document.getElementById('vocab-quiz-view').classList.remove('hidden');
+      Quiz.build(words, Vocabulary.getFullBank());
+      Quiz.start(onQuizFinish);
+    });
+  }
 
-  // 測驗徹底全部通關
   function onQuizFinish(correctCount, totalCount, dailyRecord) {
     document.getElementById('vocab-quiz-view').classList.add('hidden');
     document.getElementById('vocab-result-view').classList.remove('hidden');
     
-    // 計算所耗費的時間
+    // 計算讀書至做完題目總耗時
     const endTime = new Date();
     const diffMs = endTime - studyStartTime;
     const diffMins = Math.floor(diffMs / 60000);
     const diffSecs = Math.floor((diffMs % 60000) / 1000);
     const durationText = `${diffMins} 分 ${diffSecs} 秒`;
 
-    // 儲存至 LocalStorage (包含星期與時間)
+    // 儲存至 LocalStorage
     Vocabulary.saveDailyLog(dateKey, dayName, dailyRecord, durationText);
     
     const pct = Math.round((correctCount / totalCount) * 100) || 0;
-    document.getElementById('score-ring').style.setProperty('--pct', pct);
-    document.getElementById('score-text').textContent = `${correctCount}/${totalCount}`;
+    const scoreRing = document.getElementById('score-ring');
+    const scoreText = document.getElementById('score-text');
+    if (scoreRing) scoreRing.style.setProperty('--pct', pct);
+    if (scoreText) scoreText.textContent = `${correctCount}/${totalCount}`;
     
-    let msgs = `<b>🎉 恭喜通過！你已成功把今天的所有錯題重考複習完畢！</b><br>`;
-    msgs += `<small style="color:#aaa;">本次學習測驗共花費時間：${durationText}</small><br><br>`;
+    let msgs = `<b>🎉 恭喜通關！你已成功把今天的所有錯題重考複習完畢！</b><br>`;
+    msgs += `<small style="color:#aaa;">本次從記憶單字到完成測驗，共花費時間：${durationText}</small><br><br>`;
     if (pct === 100) {
-      msgs += '滿分！第一輪就完全記住了，表現完美！☀️';
+      msgs += '滿分！第一輪就完全答對，太強了！☀️';
     } else {
-      msgs += '太棒了！雖然初測有不小心的錯題，但你剛剛已經透過變換題型全對修正完畢了！紀錄已更新。💪';
+      msgs += '太棒了！雖然初測有錯題，但你剛剛已經透過「變換題型」全部複習答對了！結果已寫入紀錄大表。💪';
     }
-    document.getElementById('result-message').innerHTML = msgs;
+    const resultMsgEl = document.getElementById('result-message');
+    if (resultMsgEl) resultMsgEl.innerHTML = msgs;
   }
 
-  // ---- 5. 歷史紀錄雙選單分開篩選邏輯 ----
   const monthSelect = document.getElementById('history-month-select');
   const dateSelect = document.getElementById('history-date-select');
+  const navHistoryBtn = document.getElementById('nav-history-btn');
 
-  document.getElementById('nav-history-btn').addEventListener('click', () => {
-    initMonthDropdown(); // 1. 初始化月份
-    updateDateDropdown(); // 2. 聯動產生該月份的日期
-    renderHistoryPage();  // 3. 渲染報表
-  });
+  if (navHistoryBtn) {
+    navHistoryBtn.addEventListener('click', () => {
+      initMonthDropdown();
+      updateDateDropdown();
+      renderHistoryPage();
+    });
+  }
 
-  // 月份更換時，日期選單要聯動刷新
-  monthSelect.addEventListener('change', () => {
-    updateDateDropdown();
-    renderHistoryPage();
-  });
+  if (monthSelect) {
+    monthSelect.addEventListener('change', () => {
+      updateDateDropdown();
+      renderHistoryPage();
+    });
+  }
 
-  // 日期更換時，刷新畫面
-  dateSelect.addEventListener('change', () => {
-    renderHistoryPage();
-  });
+  if (dateSelect) {
+    dateSelect.addEventListener('change', () => {
+      renderHistoryPage();
+    });
+  }
 
-  // 初始化月份選單 (僅擷取 YYYY-MM)
   function initMonthDropdown() {
+    if (!monthSelect) return;
     const allLogs = Vocabulary.getAllLogs();
     const monthsSet = new Set();
 
     allLogs.forEach(log => {
       if (log.date && log.date.length >= 7) {
-        monthsSet.add(log.date.substring(0, 7)); // 取得 YYYY-MM
+        monthsSet.add(log.date.substring(0, 7)); 
       }
     });
 
@@ -112,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentSelected = monthSelect.value;
 
     if (sortedMonths.length === 0) {
-      monthSelect.innerHTML = `<option value="">尚無資料</option>`;
+      monthSelect.innerHTML = `<option value="">尚無紀錄</option>`;
       return;
     }
 
@@ -128,8 +171,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // 依據選定的月份，動態填入該月有紀錄的具體天數
   function updateDateDropdown() {
+    if (!monthSelect || !dateSelect) return;
     const allLogs = Vocabulary.getAllLogs();
     const targetMonth = monthSelect.value;
 
@@ -138,58 +181,53 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    // 篩選出該月份的所有紀錄天數
     const monthlyLogs = allLogs.filter(log => log.date && log.date.startsWith(targetMonth));
-    
-    // 第一個選項為「顯示整月份的所有天數」
-    let optionsHtml = `<option value="ALL_MONTH">-- 顯示整月紀錄 --</option>`;
+    let optionsHtml = `<option value="ALL_MONTH">-- 顯示整月所有紀錄 --</option>`;
     
     optionsHtml += monthlyLogs.map(log => {
-      const dayNum = log.date.split('-')[2]; // 取得 DD
-      return `<option value="${log.date}">${dayNum}日 (${log.dayName || '學習日'})</option>`;
+      const dayNum = log.date.split('-')[2]; 
+      return `<option value="${log.date}">${dayNum}日 (${log.dayName || '測驗日'})</option>`;
     }).join('');
 
     dateSelect.innerHTML = optionsHtml;
   }
 
-  // 渲染歷史紀錄大表（支援秀出整月或單日紀錄）
   function renderHistoryPage() {
     const container = document.getElementById('history-page-container');
+    if (!container) return;
+
     const allLogs = Vocabulary.getAllLogs();
-    const targetMonth = monthSelect.value;
-    const targetDate = dateSelect.value;
+    const targetMonth = monthSelect ? monthSelect.value : '';
+    const targetDate = dateSelect ? dateSelect.value : '';
 
     if (allLogs.length === 0 || !targetMonth) {
       container.innerHTML = `
         <div style="text-align:center; padding:50px; color:#666; font-size:1.1rem;">
-          📭 目前還沒有任何測驗歷史紀錄。<br>當你完成每日單字測驗後，對錯報表會自動存於此處！
+          📭 目前還沒有任何測驗歷史紀錄。<br>當你完成測驗後，報表會自動產出於此處！
         </div>`;
       return;
     }
 
     let logsToRender = [];
 
-    // 判斷是要秀整個月還是特定單日
+    // 判斷選單邏輯：選月份秀全月，選日期秀單日
     if (targetDate === "ALL_MONTH" || !targetDate) {
-      // 撈出該月份所有資料
       logsToRender = allLogs.filter(log => log.date && log.date.startsWith(targetMonth));
     } else {
-      // 只抽精準單日資料
       const singleLog = allLogs.find(l => l.date === targetDate);
       if (singleLog) logsToRender.push(singleLog);
     }
 
     if (logsToRender.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:30px; color:#777;">查無對應紀錄。</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:30px; color:#777;">該時段無單字紀錄。</div>`;
       return;
     }
 
-    // 巡迴渲染符合條件的所有報表
     container.innerHTML = logsToRender.map(log => `
       <div style="margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px;">
         <h3 style="margin-bottom: 12px; font-size: 1.05rem; color: #e8a33d; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
           <span>📅 日期：${log.date} (${log.dayName || '未知'})</span>
-          <span style="font-size:0.85em; color:#aaa; font-weight:normal;">⏱️ 總花費時間：<b style="color:#fff;">${log.duration || '未計時'}</b></span>
+          <span style="font-size:0.85em; color:#aaa; font-weight:normal;">⏱️ 開始讀到測驗完成總用時：<b style="color:#fff;">${log.duration || '計時有誤'}</b></span>
         </h3>
         <table style="width:100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
           <thead>
@@ -206,10 +244,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td style="padding:12px 8px;">
                   ${item.correct 
                     ? '<span style="color:#4caf50; font-weight:600;">✔ (對)</span>' 
-                    : '<span style="color:#f44336; font-weight:600;">❌ (錯)</span>'}
+                    : '<span style="color:#ff5f56; font-weight:600;">❌ (錯)</span>'}
                 </td>
                 <td style="padding:12px 8px;">
-                  <span style="color:#4caf50;">✔ 通過</span>
+                  <span style="color:#4caf50;">✔ 已藉由變換重考背熟</span>
                 </td>
               </tr>
             `).join('')}
@@ -219,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-  // ---- 其他舊有模組初始化 ----
+  // 其餘模組初始化
   if (typeof Reminder !== 'undefined') Reminder.init();
   if (typeof Exchange !== 'undefined') Exchange.init();
   if (typeof Music !== 'undefined') Music.init();
@@ -233,7 +271,8 @@ function initNav() {
       btn.classList.add('active');
 
       document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
-      document.getElementById(btn.dataset.target).classList.add('active');
+      const targetPanel = document.getElementById(btn.dataset.target);
+      if (targetPanel) targetPanel.classList.add('active');
     });
   });
 }

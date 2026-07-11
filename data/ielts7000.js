@@ -1,509 +1,418 @@
-/* ===========================================================
-   ielts7000.js
-   雅思 7000 單字庫（改用 JS 變數而非 fetch json，避免使用者用
-   「雙擊開啟 index.html」時，瀏覽器 file:// 協定擋掉 fetch 請求）
-   要新增/修改單字，直接編輯下面的陣列即可，格式：
-   { "word": "英文單字", "meaning": "中文意思", "example": "例句" }
-=========================================================== */
 const IELTS_WORDS = [
-  {
-    "word": "abandon",
-    "meaning": "放棄；遺棄",
-    "example": "The captain refused to abandon the sinking ship."
-  },
-  {
-    "word": "abundant",
-    "meaning": "豐富的；充裕的",
-    "example": "The region has abundant natural resources."
-  },
-  {
-    "word": "accelerate",
-    "meaning": "加速；促進",
-    "example": "New technology can accelerate economic growth."
-  },
-  {
-    "word": "accompany",
-    "meaning": "陪伴；伴隨",
-    "example": "Loud music often accompanies the parade."
-  },
-  {
-    "word": "accumulate",
-    "meaning": "累積；積聚",
-    "example": "Dust had accumulated on the old bookshelf."
-  },
-  {
-    "word": "adapt",
-    "meaning": "適應；改編",
-    "example": "Species must adapt to survive climate change."
-  },
-  {
-    "word": "adequate",
-    "meaning": "足夠的；適當的",
-    "example": "The team lacked adequate funding for the project."
-  },
-  {
-    "word": "adjacent",
-    "meaning": "鄰近的；毗連的",
-    "example": "The hotel is adjacent to the train station."
-  },
-  {
-    "word": "advocate",
-    "meaning": "提倡；擁護者",
-    "example": "She is a strong advocate for renewable energy."
-  },
-  {
-    "word": "aesthetic",
-    "meaning": "美學的；審美的",
-    "example": "The building's aesthetic appeal draws many tourists."
-  },
-  {
-    "word": "aggregate",
-    "meaning": "總計；聚集的",
-    "example": "The aggregate score determines the final ranking."
-  },
-  {
-    "word": "allocate",
-    "meaning": "分配；撥出",
-    "example": "The government will allocate more funds to education."
-  },
-  {
-    "word": "alter",
-    "meaning": "改變；修改",
-    "example": "They had to alter their travel plans."
-  },
-  {
-    "word": "ambiguous",
-    "meaning": "模稜兩可的",
-    "example": "The instructions were ambiguous and confused everyone."
-  },
-  {
-    "word": "analogous",
-    "meaning": "類似的；相似的",
-    "example": "The heart's function is analogous to a pump."
-  },
-  {
-    "word": "anticipate",
-    "meaning": "預期；預料",
-    "example": "Analysts anticipate a rise in oil prices."
-  },
-  {
-    "word": "apparent",
-    "meaning": "明顯的；顯然的",
-    "example": "It became apparent that the plan would fail."
-  },
-  {
-    "word": "appropriate",
-    "meaning": "適當的；恰當的",
-    "example": "Wear appropriate clothing for the interview."
-  },
-  {
-    "word": "arbitrary",
-    "meaning": "任意的；武斷的",
-    "example": "The decision seemed arbitrary and unfair."
-  },
-  {
-    "word": "aspect",
-    "meaning": "方面；層面",
-    "example": "Cost is an important aspect of the decision."
-  },
-  {
-    "word": "assemble",
-    "meaning": "組裝；集合",
-    "example": "Workers assemble the cars on the factory line."
-  },
-  {
-    "word": "assert",
-    "meaning": "斷言；主張",
-    "example": "She asserted that the report was inaccurate."
-  },
-  {
-    "word": "assess",
-    "meaning": "評估；評定",
-    "example": "Teachers assess students through regular exams."
-  },
-  {
-    "word": "assume",
-    "meaning": "假設；認定",
-    "example": "Don't assume the meeting will start on time."
-  },
-  {
-    "word": "attain",
-    "meaning": "達到；獲得",
-    "example": "He worked hard to attain his career goals."
-  },
-  {
-    "word": "attribute",
-    "meaning": "歸因於；屬性",
-    "example": "They attribute the success to teamwork."
-  },
-  {
-    "word": "authentic",
-    "meaning": "真正的；道地的",
-    "example": "The restaurant serves authentic Italian pizza."
-  },
-  {
-    "word": "autonomous",
-    "meaning": "自主的；獨立的",
-    "example": "The region became a fully autonomous state."
-  },
-  {
-    "word": "benevolent",
-    "meaning": "仁慈的；善意的",
-    "example": "The benevolent donor gave millions to charity."
-  },
-  {
-    "word": "bias",
-    "meaning": "偏見；偏向",
-    "example": "The study was criticized for gender bias."
-  },
-  {
-    "word": "capacity",
-    "meaning": "容量；能力",
-    "example": "The stadium has a capacity of 50,000 people."
-  },
-  {
-    "word": "category",
-    "meaning": "類別；種類",
-    "example": "Books are organized into different categories."
-  },
-  {
-    "word": "coherent",
-    "meaning": "連貫的；條理清楚的",
-    "example": "Her argument was clear and coherent."
-  },
-  {
-    "word": "coincide",
-    "meaning": "同時發生；一致",
-    "example": "The festival will coincide with the holiday."
-  },
-  {
-    "word": "collaborate",
-    "meaning": "合作；協作",
-    "example": "The two companies collaborate on new products."
-  },
-  {
-    "word": "commence",
-    "meaning": "開始；著手",
-    "example": "The ceremony will commence at nine o'clock."
-  },
-  {
-    "word": "compensate",
-    "meaning": "補償；賠償",
-    "example": "The airline agreed to compensate delayed passengers."
-  },
-  {
-    "word": "compile",
-    "meaning": "編輯；彙編",
-    "example": "She compiled the data into a single report."
-  },
-  {
-    "word": "complement",
-    "meaning": "補充；互補",
-    "example": "The wine complements the flavor of the dish."
-  },
-  {
-    "word": "comprehensive",
-    "meaning": "全面的；廣泛的",
-    "example": "The report gives a comprehensive overview of the market."
-  },
-  {
-    "word": "comprise",
-    "meaning": "包含；構成",
-    "example": "The committee comprises ten members."
-  },
-  {
-    "word": "conceive",
-    "meaning": "構想；設想",
-    "example": "It's hard to conceive of life without electricity."
-  },
-  {
-    "word": "concurrent",
-    "meaning": "同時發生的",
-    "example": "He is serving two concurrent prison sentences."
-  },
-  {
-    "word": "conform",
-    "meaning": "符合；遵從",
-    "example": "The product must conform to safety standards."
-  },
-  {
-    "word": "consensus",
-    "meaning": "共識；一致意見",
-    "example": "The board reached a consensus on the budget."
-  },
-  {
-    "word": "considerable",
-    "meaning": "相當大的",
-    "example": "The project required a considerable amount of time."
-  },
-  {
-    "word": "constitute",
-    "meaning": "構成；組成",
-    "example": "Women constitute half of the workforce."
-  },
-  {
-    "word": "constrain",
-    "meaning": "限制；約束",
-    "example": "Limited budgets constrain what the team can do."
-  },
-  {
-    "word": "contemporary",
-    "meaning": "當代的；同時代的",
-    "example": "The museum focuses on contemporary art."
-  },
-  {
-    "word": "context",
-    "meaning": "背景；上下文",
-    "example": "You need to understand the historical context."
-  },
-  {
-    "word": "contradict",
-    "meaning": "與……矛盾；反駁",
-    "example": "His statement seemed to contradict earlier reports."
-  },
-  {
-    "word": "contribute",
-    "meaning": "貢獻；促成",
-    "example": "Poor diet can contribute to health problems."
-  },
-  {
-    "word": "controversy",
-    "meaning": "爭議；爭論",
-    "example": "The new policy sparked widespread controversy."
-  },
-  {
-    "word": "convention",
-    "meaning": "慣例；公約",
-    "example": "It is convention to shake hands when meeting."
-  },
-  {
-    "word": "correspond",
-    "meaning": "符合；通信",
-    "example": "The results correspond closely with earlier studies."
-  },
-  {
-    "word": "criteria",
-    "meaning": "標準；準則",
-    "example": "The judges set strict criteria for the contest."
-  },
-  {
-    "word": "crucial",
-    "meaning": "至關重要的",
-    "example": "Sleep is crucial for good health."
-  },
-  {
-    "word": "cumulative",
-    "meaning": "累積的",
-    "example": "The cumulative effect of small savings adds up."
-  },
-  {
-    "word": "denote",
-    "meaning": "表示；意味著",
-    "example": "A red flag denotes danger ahead."
-  },
-  {
-    "word": "derive",
-    "meaning": "源自；獲得",
-    "example": "Many English words derive from Latin."
-  },
-  {
-    "word": "designate",
-    "meaning": "指定；指派",
-    "example": "The area was designated as a nature reserve."
-  },
-  {
-    "word": "deviate",
-    "meaning": "偏離；背離",
-    "example": "The plane had to deviate from its usual route."
-  },
-  {
-    "word": "diminish",
-    "meaning": "減少；縮小",
-    "example": "His influence began to diminish over time."
-  },
-  {
-    "word": "discrete",
-    "meaning": "個別的；離散的",
-    "example": "The data was divided into discrete categories."
-  },
-  {
-    "word": "discriminate",
-    "meaning": "歧視；區別",
-    "example": "It is illegal to discriminate based on age."
-  },
-  {
-    "word": "displace",
-    "meaning": "取代；使遷移",
-    "example": "The flood displaced thousands of residents."
-  },
-  {
-    "word": "distort",
-    "meaning": "扭曲；歪曲",
-    "example": "The mirror distorted his reflection."
-  },
-  {
-    "word": "diverse",
-    "meaning": "多樣的；不同的",
-    "example": "The city has a diverse and vibrant culture."
-  },
-  {
-    "word": "document",
-    "meaning": "記錄；文件",
-    "example": "Researchers document every stage of the experiment."
-  },
-  {
-    "word": "domain",
-    "meaning": "領域；範疇",
-    "example": "Artificial intelligence is a rapidly growing domain."
-  },
-  {
-    "word": "dominant",
-    "meaning": "主導的；佔優勢的",
-    "example": "English is the dominant language of business."
-  },
-  {
-    "word": "dynamic",
-    "meaning": "動態的；充滿活力的",
-    "example": "The city has a dynamic and fast-changing economy."
-  },
-  {
-    "word": "eliminate",
-    "meaning": "消除；淘汰",
-    "example": "The new system will eliminate paper waste."
-  },
-  {
-    "word": "emerge",
-    "meaning": "浮現；出現",
-    "example": "New evidence has emerged during the investigation."
-  },
-  {
-    "word": "emphasis",
-    "meaning": "強調；重點",
-    "example": "The course places emphasis on practical skills."
-  },
-  {
-    "word": "empirical",
-    "meaning": "經驗主義的；實證的",
-    "example": "The theory is based on empirical evidence."
-  },
-  {
-    "word": "enable",
-    "meaning": "使能夠；促成",
-    "example": "The grant will enable her to study abroad."
-  },
-  {
-    "word": "encounter",
-    "meaning": "遭遇；邂逅",
-    "example": "Travelers may encounter delays during storms."
-  },
-  {
-    "word": "enhance",
-    "meaning": "提升；增強",
-    "example": "Regular exercise can enhance mental health."
-  },
-  {
-    "word": "enormous",
-    "meaning": "巨大的",
-    "example": "The project required an enormous amount of effort."
-  },
-  {
-    "word": "ensure",
-    "meaning": "確保",
-    "example": "Please ensure the door is locked before leaving."
-  },
-  {
-    "word": "entity",
-    "meaning": "實體；獨立存在體",
-    "example": "Each subsidiary operates as a separate entity."
-  },
-  {
-    "word": "environment",
-    "meaning": "環境",
-    "example": "We must protect the environment for future generations."
-  },
-  {
-    "word": "equivalent",
-    "meaning": "相等的；等同的",
-    "example": "One mile is roughly equivalent to 1.6 kilometers."
-  },
-  {
-    "word": "erode",
-    "meaning": "侵蝕；削弱",
-    "example": "Coastal cliffs erode over many years."
-  },
-  {
-    "word": "establish",
-    "meaning": "建立；確立",
-    "example": "The company was established in 1990."
-  },
-  {
-    "word": "estimate",
-    "meaning": "估計；估算",
-    "example": "Experts estimate the cost at two million dollars."
-  },
-  {
-    "word": "ethical",
-    "meaning": "道德的；倫理的",
-    "example": "The scientist raised ethical concerns about the research."
-  },
-  {
-    "word": "evaluate",
-    "meaning": "評估；評價",
-    "example": "Teachers evaluate students' progress each term."
-  },
-  {
-    "word": "eventually",
-    "meaning": "最終；終於",
-    "example": "She eventually found a solution to the problem."
-  },
-  {
-    "word": "evident",
-    "meaning": "明顯的",
-    "example": "It was evident that he was exhausted."
-  },
-  {
-    "word": "evolve",
-    "meaning": "演化；發展",
-    "example": "Language continues to evolve over time."
-  },
-  {
-    "word": "exceed",
-    "meaning": "超過；超越",
-    "example": "Sales this year exceeded expectations."
-  },
-  {
-    "word": "exclude",
-    "meaning": "排除；排斥",
-    "example": "The price does not exclude tax."
-  },
-  {
-    "word": "exhibit",
-    "meaning": "展示；表現出",
-    "example": "The museum will exhibit rare artifacts next month."
-  },
-  {
-    "word": "expand",
-    "meaning": "擴大；擴展",
-    "example": "The company plans to expand into Asian markets."
-  },
-  {
-    "word": "expose",
-    "meaning": "揭露；使暴露",
-    "example": "The report exposed serious safety failures."
-  },
-  {
-    "word": "external",
-    "meaning": "外部的；外面的",
-    "example": "The device has an external power source."
-  },
-  {
-    "word": "extract",
-    "meaning": "提取；萃取",
-    "example": "Workers extract oil from deep underground."
-  },
-  {
-    "word": "facilitate",
-    "meaning": "促進；使便利",
-    "example": "The new software will facilitate remote work."
-  }
+  {"word": "aboard", "meaning": "在船(或飛機,車)上", "example": "All passengers must go aboard the plane immediately."},
+  {"word": "acceptable", "meaning": "可接受的", "example": "The terms of the contract are fully acceptable to both parties."},
+  {"word": "accident", "meaning": "意外(事情);災禍", "example": "She had a minor car accident on her way to work this morning."},
+  {"word": "account", "meaning": "帳目;帳戶;說明", "example": "Please provide a detailed account of your travel expenses."},
+  {"word": "accurate", "meaning": "準確的;精確的", "example": "The weather forecast was highly accurate this week."},
+  {"word": "ache", "meaning": "疼痛", "example": "After sitting at the desk all day, my lower back began to ache."},
+  {"word": "achieve", "meaning": "完成,實現", "example": "With hard work and dedication, you can achieve any goal."},
+  {"word": "achievement", "meaning": "成就;達成", "example": "Winning the championship was his greatest professional achievement."},
+  {"word": "activity", "meaning": "活力;活動;行動[U]", "example": "The school offers a wide variety of extracurricular activities."},
+  {"word": "actual", "meaning": "實際的;現實的", "example": "The actual cost of the project was much lower than estimated."},
+  {"word": "additional", "meaning": "額外的,附加的", "example": "We need additional information before making a final decision."},
+  {"word": "admire", "meaning": "欽佩;欣賞", "example": "I really admire her courage and positive attitude toward life."},
+  {"word": "admit", "meaning": "承認", "example": "He was brave enough to admit his mistake in front of the team."},
+  {"word": "adopt", "meaning": "採取;吸收;收養", "example": "The company decided to adopt a new strategy to increase sales."},
+  {"word": "advanced", "meaning": "先進的;高級的", "example": "Medical science has made advanced progress in recent years."},
+  {"word": "advantage", "meaning": "優點,優勢", "example": "Taking this course will give you a significant advantage in the exam."},
+  {"word": "adventure", "meaning": "冒險,冒險活動", "example": "Traveling alone in a foreign country is always an adventure."},
+  {"word": "advertise", "meaning": "為...做廣告", "example": "The university plans to advertise its new program online."},
+  {"word": "advertisement", "meaning": "廣告(ad)", "example": "I saw an advertisement for a graphic designer job in the newspaper."},
+  {"word": "advice", "meaning": "勸告,忠告", "example": "My teacher gave me some excellent advice on how to study effectively."},
+  {"word": "advise", "meaning": "勸告,忠告", "example": "The doctor strongly advised him to reduce his daily sugar intake."},
+  {"word": "adviser", "meaning": "顧問;導師", "example": "Learning how to consult with your adviser is recommended."},
+  {"word": "affect", "meaning": "影響;感動", "example": "The lack of sleep will directly affect your performance at school."},
+  {"word": "afford", "meaning": "買得起;負擔得起", "example": "After saving money for a year, she can finally afford a new laptop."},
+  {"word": "afterward", "meaning": "之後,後來", "example": "We completed the project and discussed details afterward."},
+  {"word": "agriculture", "meaning": "農業,農耕", "example": "Organic agriculture has become increasingly popular among young farmers."},
+  {"word": "air-conditioner", "meaning": "冷氣機", "example": "Please turn on the air-conditioner because it is very hot inside."},
+  {"word": "alley", "meaning": "小巷,後街;小徑", "example": "The narrow alley behind the restaurant leads to the main street."},
+  {"word": "amaze", "meaning": "使大為驚奇", "example": "The magician's incredible tricks never fail to amaze the audience."},
+  {"word": "amazement", "meaning": "驚奇,詫異", "example": "To our amazement, the young boy solved the complex puzzle instantly."},
+  {"word": "ambassador", "meaning": "大使;使節", "example": "The newly appointed ambassador traveled to Paris to promote peace."},
+  {"word": "ambition", "meaning": "雄心,抱負,野心", "example": "Her primary ambition is to become a successful software engineer."},
+  {"word": "angle", "meaning": "角;角度", "example": "The photographer captured the beautiful building from a unique angle."},
+  {"word": "announce", "meaning": "宣布,發布,通知", "example": "The government will announce the new policy tomorrow morning."},
+  {"word": "announcement", "meaning": "宣告", "example": "The school principal made an important announcement during assembly."},
+  {"word": "apart", "meaning": "分開地,有距離地", "example": "The two houses are located about three miles apart from each other."},
+  {"word": "apparent", "meaning": "明顯的", "example": "It was apparent from his smile that he had passed the interview."},
+  {"word": "appeal", "meaning": "呼籲,懇求;吸引(+to)", "example": "The charity organization made an urgent appeal for medical supplies."},
+  {"word": "appreciate", "meaning": "欣賞;感謝", "example": "I deeply appreciate your help during this difficult time."},
+  {"word": "approach", "meaning": "接近,靠近;方法", "example": "As the deadline approaches, we need to work much faster."},
+  {"word": "approve", "meaning": "贊成,同意;批准", "example": "The city council did not approve the plan to build a new mall."},
+  {"word": "aquarium", "meaning": "魚缸;水族箱", "example": "The children were excited to see the beautiful dolphins at the aquarium."},
+  {"word": "arithmetic", "meaning": "算術,計算[U]", "example": "Basic arithmetic skills are essential for everyday financial tasks."},
+  {"word": "arrival", "meaning": "到達", "example": "The flight's expected arrival time has been delayed by an hour."},
+  {"word": "ash", "meaning": "灰,灰燼", "example": "Volcanic ash covered the entire village after the sudden eruption."},
+  {"word": "aside", "meaning": "在旁邊;到(或向)旁邊", "example": "She stepped aside to let the elderly lady pass through the door."},
+  {"word": "assist", "meaning": "幫助,協助;支持", "example": "The volunteer stayed after class to assist students with their homework."},
+  {"word": "athlete", "meaning": "運動員,體育家", "example": "The professional athlete trained hard to prepare for the Olympic Games."},
+  {"word": "attempt", "meaning": "企圖,嘗試", "example": "They made a desperate attempt to fix the engine before the storm hit."},
+  {"word": "attitude", "meaning": "態度,看法", "example": "Maintaining a positive attitude can help you overcome any challenge."},
+  {"word": "attract", "meaning": "吸引;引誘", "example": "The beautiful scenery of the mountain attracts millions of tourists."},
+  {"word": "attractive", "meaning": "迷人的;有魅力的", "example": "The company offers a highly attractive salary and benefits package."},
+  {"word": "audience", "meaning": "觀眾,聽眾,讀者", "example": "The audience stood up and applauded loudly at the end of the show."},
+  {"word": "author", "meaning": "作者,作家", "example": "The famous author signed hundreds of books for his fans at the store."},
+  {"word": "automatic", "meaning": "自動的", "example": "The building is equipped with an automatic fire sprinkler system."},
+  {"word": "automobile", "meaning": "汽車", "example": "The manufacturing plant produces thousands of automobiles every month."},
+  {"word": "available", "meaning": "在手邊的;可得到的", "example": "Free Wi-Fi is available to all customers in this coffee shop."},
+  {"word": "avenue", "meaning": "林蔭大道,馬路", "example": "Fifth Avenue is one of the most famous shopping streets in New York."},
+  {"word": "average", "meaning": "平均,平均數", "example": "On average, a person needs about eight hours of sleep per night."},
+  {"word": "awake", "meaning": "喚醒;醒著的", "example": "The loud noise outside kept me awake for most of the night."},
+  {"word": "awaken", "meaning": "醒;覺醒;喚醒", "example": "The sweet smell of fresh coffee always awakens me in the morning."},
+  {"word": "award", "meaning": "授予,給予;獎品", "example": "She won a prestigious award for her outstanding research paper."},
+  {"word": "aware", "meaning": "知道的,察覺的", "example": "Drivers must be fully aware of the traffic rules at all times."},
+  {"word": "awful", "meaning": "可怕的,嚇人的;極糟的", "example": "The weather was absolutely awful during our weekend camping trip."},
+  
+  {"word": "background", "meaning": "背景;經歷", "example": "Her background in computer science makes her perfect for this job."},
+  {"word": "bacon", "meaning": "培根;功能豬肉", "example": "We enjoyed crispy bacon and fresh eggs for breakfast."},
+  {"word": "bacteria", "meaning": "細菌", "example": "Some bacteria are highly beneficial to our digestive system."},
+  {"word": "badly", "meaning": "壞;嚴重地", "example": "The driver was badly injured in the highway collision."},
+  {"word": "badminton", "meaning": "羽毛球", "example": "Playing badminton is an excellent way to improve hand-eye coordination."},
+  {"word": "baggage", "meaning": "行李", "example": "You are allowed to bring two pieces of carry-on baggage."},
+  {"word": "bait", "meaning": "餌", "example": "The fisherman put a worm on the hook as bait."},
+  {"word": "balance", "meaning": "平衡;均衡", "example": "A balanced diet is essential for maintaining robust health."},
+  {"word": "bandage", "meaning": "繃帶", "example": "The nurse wrapped a clean bandage around his sprained wrist."},
+  {"word": "bang", "meaning": "發出砰的一聲;猛擊", "example": "The door closed with a loud bang due to the strong wind."},
+  {"word": "bare", "meaning": "赤裸的;光禿禿的", "example": "The trees are completely bare during the freezing winter months."},
+  {"word": "barely", "meaning": "幾乎沒有;僅僅", "example": "She could barely hear the speaker's voice from the back row."},
+  {"word": "barn", "meaning": "穀倉;馬房", "example": "The farmers stored the golden hay inside the large wooden barn."},
+  {"word": "barrel", "meaning": "大桶", "example": "The old cellar contained several barrels of premium wine."},
+  {"word": "bay", "meaning": "海灣;河灣", "example": "The luxury hotel overlooks a spectacular and peaceful sandy bay."},
+  {"word": "beam", "meaning": "樑;光線,光束", "example": "A bright beam of sunlight shone directly through the window."},
+  {"word": "beast", "meaning": "野獸;畜生", "example": "The ancient legend tells the story of a terrifying wild beast."},
+  {"word": "beggar", "meaning": "乞丐", "example": "The homeless beggar sat quietly on the crowded street corner."},
+  {"word": "behave", "meaning": "表現;舉止", "example": "The children were instructed to behave themselves in the museum."},
+  {"word": "being", "meaning": "存在,生命;生物", "example": "Every living being on this earth deserves respect and care."},
+  {"word": "belly", "meaning": "肚子", "example": "He rubbed his belly happily after eating a massive meal."},
+  {"word": "abdomen", "meaning": "腹;腹部", "example": "The surgeon performed a complex operation on the patient's abdomen."},
+  {"word": "beneath", "meaning": "在...之下", "example": "The mysterious treasure was buried deep beneath the desert sand."},
+  {"word": "benefit", "meaning": "利益,好處;優勢", "example": "Regular exercise provides numerous physical and mental benefits."},
+  {"word": "berry", "meaning": "莓果", "example": "We picked fresh sweet berries from the bushes in the garden."},
+  {"word": "bible", "meaning": "聖經", "example": "The family bible has been passed down through five generations."},
+  {"word": "billion", "meaning": "十億", "example": "The tech company invested over a billion dollars in AI research."},
+  {"word": "bingo", "meaning": "賓果遊戲", "example": "The elderly citizens gather every Friday to play bingo together."},
+  {"word": "biscuit", "meaning": "餅乾,小麵包", "example": "She enjoyed a cup of black tea and a sweet chocolate biscuit."},
+  {"word": "blame", "meaning": "責備,指責", "example": "You cannot blame the assistant for the sudden system failure."},
+  {"word": "blanket", "meaning": "毛毯,床罩", "example": "She wrapped a warm wool blanket around her cold shoulders."},
+  {"word": "bleed", "meaning": "流血,出血", "example": "Apply firm pressure to the cut to stop it from bleeding."},
+  {"word": "bless", "meaning": "保佑,庇護", "example": "The priest blessed the newlyweds and wished them happiness."},
+  {"word": "blouse", "meaning": "女短上衣", "example": "She wore a elegant white silk blouse to her job interview."},
+  {"word": "bold", "meaning": "大膽的;粗體的", "example": "Making a bold career change requires immense courage and planning."},
+  {"word": "boot", "meaning": "長筒靴", "example": "He put on his heavy leather boots before hiking up the mountain."},
+  {"word": "border", "meaning": "邊緣,邊界;國界", "example": "The tourists crossed the national border without any delay."},
+  {"word": "bore", "meaning": "鑽孔;令人厭煩", "example": "The long, repetitive presentation began to bore the audience."},
+  {"word": "brake", "meaning": "煞車", "example": "He stepped on the brake immediately when the dog ran onto the road."},
+  {"word": "brass", "meaning": "黃銅", "example": "The antique door handle was made of beautiful polished brass."},
+  {"word": "bravery", "meaning": "勇敢,勇氣", "example": "The firefighter was awarded a medal for his outstanding bravery."},
+  {"word": "breast", "meaning": "乳房,胸部", "example": "The baby was cradled gently against its mother's breast."},
+  {"word": "breath", "meaning": "呼吸,氣息", "example": "Take a deep breath and relax before you start your speech."},
+  {"word": "breathe", "meaning": "呼吸", "example": "It is difficult to breathe normally at high mountain altitudes."},
+  {"word": "breeze", "meaning": "微風,和風", "example": "A cool summer breeze blew gently across the ocean beach."},
+  {"word": "bride", "meaning": "新娘", "example": "The beautiful bride walked down the aisle smiling brightly."},
+  {"word": "brilliant", "meaning": "明亮的;才華橫溢的", "example": "His brilliant business strategy led the startup to massive success."},
+  {"word": "brook", "meaning": "小河,小溪", "example": "We could hear the soothing sound of the bubbling mountain brook."},
+  {"word": "broom", "meaning": "掃帚", "example": "She used a traditional straw broom to sweep the dusty floor."},
+  {"word": "brow", "meaning": "眉毛;額頭", "example": "He wiped the sweat from his hot brow after running the race."},
+  {"word": "bubble", "meaning": "氣泡", "example": "Children love blowing shiny soap bubbles on sunny afternoons."},
+  {"word": "bucket", "meaning": "水桶", "example": "She filled the plastic bucket with cool water from the tap."},
+  {"word": "bud", "meaning": "芽;花蕾", "example": "The colorful rose buds are starting to open in the spring sun."},
+  {"word": "budget", "meaning": "預算", "example": "We must carefully manage our monthly budget to avoid overspending."},
+  {"word": "buffalo", "meaning": "水牛", "example": "The farmers used water buffaloes to plow the muddy rice fields."},
+  {"word": "buffet", "meaning": "自助餐", "example": "The five-star hotel offers a delicious international buffet dinner."},
+  {"word": "bulb", "meaning": "燈泡", "example": "Please replace the broken light bulb in the master bedroom."},
+  {"word": "bull", "meaning": "公牛", "example": "The angry black bull charged fiercely toward the red cape."},
+  {"word": "bullet", "meaning": "子彈", "example": "The thick bulletproof vest successfully stopped the speeding bullet."},
+  {"word": "bump", "meaning": "碰,撞", "example": "I accidentally bumped my head against the low wooden shelf."},
+  {"word": "bunch", "meaning": "串,束", "example": "My boyfriend bought me a beautiful bunch of fresh red roses."},
+  {"word": "burden", "meaning": "重擔;負擔", "example": "Caring for an elderly relative can be a heavy emotional burden."},
+  {"word": "burglar", "meaning": "夜賊;破門盜竊者", "example": "The silent burglar entered the dark house through an open window."},
+  {"word": "bury", "meaning": "埋葬,安葬", "example": "The pirates decided to bury their gold coins on a remote island."},
+  {"word": "bush", "meaning": "灌木,灌木叢", "example": "We planted several flowering bushes along the front garden fence."},
+  {"word": "buzz", "meaning": "嗡嗡叫;唧唧響", "example": "A swarm of angry bees began to buzz loudly around the hive."},
+  
+  {"word": "cabin", "meaning": "客艙;小木屋", "example": "They rented a cozy log cabin in the mountains for their vacation."},
+  {"word": "campus", "meaning": "校園", "example": "The university campus is incredibly beautiful during the autumn season."},
+  {"word": "cane", "meaning": "手杖;拐杖", "example": "The elderly gentleman relied on a walking cane to navigate the stairs."},
+  {"word": "canoe", "meaning": "獨木舟", "example": "We paddled our green canoe quietly down the peaceful mountain river."},
+  {"word": "canyon", "meaning": "峽谷", "example": "The Grand Canyon is one of the most magnificent sights in the world."},
+  {"word": "capable", "meaning": "有能力的;能幹的", "example": "She is a highly capable manager who can handle any urgent crisis."},
+  {"word": "capital", "meaning": "首都;大寫字母;資本", "example": "London is the capital and largest economic center of the United Kingdom."},
+  {"word": "capture", "meaning": "捕獲;俘虜", "example": "The police managed to capture the escaped prisoner within two hours."},
+  {"word": "carpenter", "meaning": "木匠", "example": "The skilled carpenter custom-built a beautiful solid oak dining table."},
+  {"word": "carriage", "meaning": "四輪馬車", "example": "The tourists enjoyed a romantic horse-drawn carriage ride through Central Park."},
+  {"word": "cast", "meaning": "投,擲;演員陣容", "example": "The director assembled a brilliant cast of actors for his new film."},
+  {"word": "casual", "meaning": "非正式的;偶然的", "example": "On Fridays, employees are allowed to wear casual clothes to the office."},
+  {"word": "caterpillar", "meaning": "毛蟲", "example": "The fuzzy green caterpillar slowly crawled along the broad leaf."},
+  {"word": "cattle", "meaning": "牛群", "example": "The cowboys rounded up the cattle and drove them across the valley."},
+  {"word": "celebrate", "meaning": "慶祝", "example": "The family gathered at a premium restaurant to celebrate her graduation."},
+  {"word": "centimeter", "meaning": "公分", "example": "The small wooden block was exactly ten centimeters in length."},
+  {"word": "ceramic", "meaning": "陶器", "example": "She collected beautiful handmade ceramic plates from all over Asia."},
+  {"word": "chain", "meaning": "鏈,鏈條;連鎖店", "example": "He owns a successful national chain of luxury coffee shops."},
+  {"word": "challenge", "meaning": "挑戰", "example": "Learning a completely new language is a demanding but rewarding challenge."},
+  {"word": "champion", "meaning": "優勝者,冠軍", "example": "The local tennis team became the national champions this year."},
+  {"word": "changeable", "meaning": "易變的", "example": "The mountain weather is highly changeable, so bring a warm jacket."},
+  {"word": "channel", "meaning": "頻道;水道", "example": "He switched the TV channel to watch the latest evening news report."},
+  {"word": "chapter", "meaning": "章節", "example": "The most exciting events of the novel occur in the final chapter."},
+  {"word": "charm", "meaning": "魅力;符咒", "example": "The historic old town has a unique charm that attracts many tourists."},
+  {"word": "chat", "meaning": "閒談,聊天", "example": "We sat down for a friendly chat over a hot cup of coffee."},
+  {"word": "cheek", "meaning": "臉頰", "example": "She kissed her grandfather gently on the cheek before leaving."},
+  {"word": "cheer", "meaning": "歡呼,喝采", "example": "The excited crowd began to cheer when the home team scored a goal."},
+  {"word": "cheerful", "meaning": "興高采烈的", "example": "Her cheerful personality always brings joy to everyone in the room."},
+  {"word": "cheese", "meaning": "乳酪", "example": "I ordered a delicious pizza with extra mozzarella and cheddar cheese."},
+  {"word": "cherry", "meaning": "櫻桃", "example": "The pastry chef decorated the top of the cake with sweet red cherries."},
+  {"word": "chest", "meaning": "胸膛", "example": "The doctor listened carefully to the patient's heart and chest."},
+  {"word": "chew", "meaning": "咀嚼", "example": "You should chew your food thoroughly to ensure proper digestion."},
+  {"word": "childhood", "meaning": "幼年時期", "example": "She spent her happy childhood playing in the countryside near Kyoto."},
+  {"word": "chill", "meaning": "寒冷", "example": "There is a sudden autumn chill in the air this morning."},
+  {"word": "chilly", "meaning": "寒冷的", "example": "It is a chilly evening, so make sure you wear a thick coat."},
+  {"word": "chimney", "meaning": "煙囪", "example": "A steady stream of grey smoke rose from the brick chimney."},
+  {"word": "chip", "meaning": "碎片;晶片", "example": "The global shortage of computer chips heavily impacted automobile production."},
+  {"word": "choke", "meaning": "使窒息;哽住", "example": "The dense black smoke from the kitchen fire made it difficult to breathe."},
+  {"word": "chop", "meaning": "砍,劈", "example": "He used a sharp axe to chop firewood for the winter stove."},
+  {"word": "cigarette", "meaning": "香煙", "example": "Smoking cigarettes inside public buildings is strictly prohibited by law."},
+  {"word": "circus", "meaning": "馬戲團", "example": "The children were thrilled to watch the acrobatics at the circus."},
+  {"word": "civil", "meaning": "公民的", "example": "The defense of civil liberties is a fundamental pillar of democracy."},
+  {"word": "classical", "meaning": "古典的", "example": "She prefers listening to classical music while studying for exams."},
+  {"word": "click", "meaning": "發出卡嗒聲;點擊", "example": "Simply click the yellow link to download the complete file."},
+  {"word": "client", "meaning": "客戶", "example": "Our law firm works hard to protect the interests of our clients."},
+  {"word": "clinic", "meaning": "診所", "example": "She visited the local dental clinic to get her teeth cleaned."},
+  {"word": "clip", "meaning": "修剪;短片", "example": "The editor shared a short video clip of the upcoming action movie."},
+  {"word": "clue", "meaning": "線索", "example": "The detective found a vital clue that helped solve the mysterious case."},
+  {"word": "cocktail", "meaning": "雞尾酒", "example": "They ordered a round of refreshing cocktails at the beachside bar."},
+  {"word": "coconut", "meaning": "椰子", "example": "We drank fresh sweet coconut water directly from the fruit."},
+  {"word": "collar", "meaning": "衣領;項圈", "example": "He adjusted his shirt collar before starting his presentation."},
+  {"word": "collection", "meaning": "收集;收藏品", "example": "The museum house a magnificent collection of modern paintings."},
+  {"word": "college", "meaning": "大學;學院", "example": "He is planning to go to college next year to study engineering."},
+  {"word": "colony", "meaning": "殖民地", "example": "The territory was once a small trading colony of Great Britain."},
+  {"word": "column", "meaning": "圓柱;專欄;縱列", "example": "She writes a popular weekly Column about digital technology trends."},
+  {"word": "combine", "meaning": "結合", "example": "You must combine hard work with smart strategy to achieve success."},
+  {"word": "comfort", "meaning": "舒適;安慰", "example": "He tried to comfort his crying little sister after she fell down."},
+  {"word": "comma", "meaning": "逗號", "example": "A comma is used to separate items in a list in a sentence."},
+  {"word": "command", "meaning": "命令", "example": "The soldiers were trained to obey their commander's orders immediately."},
+  {"word": "commercial", "meaning": "廣告;商業的", "example": "The television commercial was highly successful in boosting sales."},
+  {"word": "committee", "meaning": "委員會", "example": "The organizing committee met to discuss the upcoming cultural festival."},
+  {"word": "communicate", "meaning": "溝通", "example": "Effective leaders know how to communicate clearly with their team members."},
+  {"word": "comparison", "meaning": "比較", "example": "A comparison between the two products shows significant quality differences."},
+  {"word": "compete", "meaning": "競爭", "example": "Athletes from all over the world compete in the Olympic Games."},
+  {"word": "complaint", "meaning": "抱怨", "example": "We received several customer complaints regarding the shipping delays."},
+  {"word": "complex", "meaning": "複雜的", "example": "The engineer solved the complex system error in less than an hour."},
+  {"word": "concern", "meaning": "關心;關於", "example": "The sudden rise in global temperatures is a major environmental concern."},
+  {"word": "concert", "meaning": "音樂會", "example": "Thousands of excited fans gathered to attend the outdoor pop concert."},
+  {"word": "conclude", "meaning": "結束;斷定", "example": "Based on the evidence, the police concluded that the fire was accidental."},
+  {"word": "conclusion", "meaning": "結論", "example": "After analyzing the research data, we arrived at a clear conclusion."},
+  {"word": "condition", "meaning": "情況;條件", "example": "The antique car was restored and is now in pristine condition."},
+  {"word": "cone", "meaning": "圓錐體;甜筒", "example": "He ordered a double-scoop chocolate ice cream in a waffle cone."},
+  {"word": "confident", "meaning": "有信心的", "example": "She felt highly confident about passing her driving test today."},
+  {"word": "confuse", "meaning": "使...困惑", "example": "The complex rules of the card game confused the young children."},
+  {"word": "connect", "meaning": "連接", "example": "You must connect the blue cable to the port on the computer."},
+  {"word": "connection", "meaning": "連接;聯絡", "example": "There is a strong connection between active study and high memory retention."},
+  {"word": "conscious", "meaning": "神志清醒的;有知覺的", "example": "She was fully conscious and alert when the rescue helicopter arrived."},
+  {"word": "considerable", "meaning": "相當大(多)的", "example": "The project required a considerable amount of time and resources."},
+  {"word": "consideration", "meaning": "考慮;體貼", "example": "The design team took safety and ease of use into careful consideration."},
+  {"word": "constant", "meaning": "固定的;不變的", "example": "Our main goal is to maintain a constant level of high service quality."},
+  {"word": "continent", "meaning": "洲;大陸", "example": "Asia is the largest and most populous continent on the planet."},
+  {"word": "contract", "meaning": "契約;合同", "example": "The client signed a two-year service contract with our agency."},
+  {"word": "couch", "meaning": "長沙發", "example": "They bought a comfortable new leather couch for the living room."},
+  {"word": "countable", "meaning": "可數的", "example": "Nouns like 'apple' and 'car' are classified as countable nouns."},
+  {"word": "coward", "meaning": "懦夫;膽怯者", "example": "He was labeled a coward for running away during the emergency."},
+  {"word": "cradle", "meaning": "搖籃", "example": "The sleeping mother gently rocked the wooden baby cradle."},
+  {"word": "crash", "meaning": "猛撞;撞擊", "example": "The airplane's emergency landing avoided a major crash."},
+  {"word": "crawl", "meaning": "爬行", "example": "The baby is learning how to crawl across the soft living room carpet."},
+  {"word": "creative", "meaning": "有創意的", "example": "Her creative design solutions won praise from the marketing team."},
+  {"word": "creator", "meaning": "創造者", "example": "The creator of the famous video game gave a live interview online."},
+  {"word": "creature", "meaning": "生物", "example": "The deep ocean is home to many strange and mysterious creatures."},
+  {"word": "credit", "meaning": "信用;功勞", "example": "You deserve full credit for completing this difficult project on time."},
+  {"word": "creep", "meaning": "躡手躡足地走", "example": "He tried to creep quietly up the stairs to avoid waking his parents."},
+  {"word": "crew", "meaning": "機組人員", "example": "The captain praised his ship's crew for their exceptional teamwork during the storm."},
+  {"word": "cricket", "meaning": "蟋蟀;板球", "example": "We listened to the relaxing sound of crickets chirping in the garden."},
+  {"word": "criminal", "meaning": "罪犯", "example": "The police caught the dangerous criminal after a brief high-speed chase."},
+  {"word": "crisp", "meaning": "脆的", "example": "I love eating fresh, crisp red apples in the autumn morning."},
+  {"word": "crown", "meaning": "王冠", "example": "The queen's golden crown was adorned with hundreds of diamonds."},
+  {"word": "crunchy", "meaning": "發出嘎吱嘎吱聲的", "example": "The chef prepared a refreshing salad with crunchy fresh carrots."},
+  {"word": "crutch", "meaning": "撐拐", "example": "He had to walk on crutches for a month after fracturing his leg."},
+  {"word": "cultural", "meaning": "文化的", "example": "The international food festival was an amazing cultural exchange event."},
+  {"word": "cupboard", "meaning": "碗櫃", "example": "Please put the clean glasses back into the kitchen cupboard."},
+  {"word": "current", "meaning": "當前的;水流", "example": "The swimmer struggled to swim against the strong ocean current."},
+  {"word": "cycle", "meaning": "週期", "example": "We are studying the natural cycle of evaporation and rainfall."},
+  
+  {"word": "dairy", "meaning": "乳品場", "example": "He developed a stomach ache after consuming fresh dairy products."},
+  {"word": "dam", "meaning": "水壩", "example": "The massive dam generates clean electricity for the entire region."},
+  {"word": "dare", "meaning": "敢", "example": "Nobody dared to cross the old suspension bridge in the dark."},
+  {"word": "darling", "meaning": "心愛的人", "example": "He bought a beautiful necklace for his darling wife's birthday."},
+  {"word": "dash", "meaning": "猛衝", "example": "We made a quick dash for shelter when it started to rain heavily."},
+  {"word": "deafen", "meaning": "使聾", "example": "The deafening noise of the jet engine filled the runway area."},
+  {"word": "dealer", "meaning": "經銷商", "example": "He purchased his pre-owned car from a reliable local dealer."},
+  {"word": "decade", "meaning": "十年", "example": "The internet has evolved incredibly over the past decade."},
+  {"word": "deck", "meaning": "甲板", "example": "The passengers stood on the ship's deck to watch the sunset."},
+  {"word": "deed", "meaning": "行為;功績", "example": "Helping the lost elderly lady was a highly kind deed."},
+  {"word": "deepen", "meaning": "加深", "example": "Reading books regularly is a great way to deepen your knowledge."},
+  {"word": "define", "meaning": "給...下定義", "example": "It is difficult to define the exact meaning of abstract art."},
+  {"word": "definition", "meaning": "定義", "example": "The dictionary provides a very clear definition of the word."},
+  {"word": "delivery", "meaning": "投遞;分娩", "example": "The express delivery service arrived exactly on schedule this morning."},
+  {"word": "democracy", "meaning": "民主", "example": "Freedom of speech is a core component of a healthy democracy."},
+  {"word": "democratic", "meaning": "民主的", "example": "Our student council selection is based on a democratic voting process."},
+  {"word": "deposit", "meaning": "存款;保證金", "example": "She made a substantial cash deposit into her savings account."},
+  {"word": "description", "meaning": "描寫;形容", "example": "The witness gave the police a highly detailed description of the suspect."},
+  {"word": "designer", "meaning": "設計者", "example": "The architect worked as the lead designer of the smart building."},
+  {"word": "desirable", "meaning": "值得嚮往(擁有)的", "example": "A calm, quiet working environment is highly desirable for productivity."},
+  {"word": "destroy", "meaning": "毀壞,破壞", "example": "The sudden fire threatened to destroy the entire historical building."},
+  {"word": "detail", "meaning": "細節", "example": "Pay close attention to every detail of the blueprint before construction."},
+  {"word": "determine", "meaning": "決定", "example": "Your attitude, not your starting point, will determine your success."},
+  {"word": "devil", "meaning": "魔鬼", "example": "The child behaved like a little devil during the plane trip."},
+  {"word": "dialogue", "meaning": "對話", "example": "The two countries entered a constructive dialogue to settle disputes."},
+  {"word": "diet", "meaning": "節食;飲食", "example": "She decided to go on a healthy diet to reduce her weight."},
+  {"word": "diligent", "meaning": "勤勉的,勤奮的", "example": "He is a highly diligent student who works hard in every class."},
+  {"word": "dim", "meaning": "微暗的;暗淡的", "example": "The small flashlight cast a dim and flickering beam of light."},
+  {"word": "dime", "meaning": "一角", "example": "He handed the cashier a silver dime and a shiny nickel coin."},
+  {"word": "dine", "meaning": "進餐,用餐", "example": "They went out to dine at a premium seafood restaurant tonight."},
+  {"word": "dip", "meaning": "浸;泡", "example": "She dipped her sweet biscuit into the hot tea before eating."},
+  {"word": "dirt", "meaning": "汙物;爛泥", "example": "He washed the thick brown dirt off his muddy hiking boots."},
+  {"word": "disappoint", "meaning": "使...失望", "example": "The unexpected cancellation of the concert disappointed thousands of fans."},
+  {"word": "disappointment", "meaning": "失望", "example": "To our immense disappointment, the main program was postponed again."},
+  {"word": "disco", "meaning": "迪斯科舞廳", "example": "They spent the Saturday evening dancing happily at the local disco."},
+  {"word": "discount", "meaning": "折扣", "example": "The department store offers a 20% discount on winter jackets."},
+  {"word": "discovery", "meaning": "發現", "example": "The discovery of gravity revolutionized our understanding of physics."},
+  {"word": "disease", "meaning": "病,疾病", "example": "Regular hand washing is an effective way to prevent the spread of disease."},
+  {"word": "disk", "meaning": "圓盤;碟片", "example": "He stored the digital backup files on an external hard disk."},
+  {"word": "dislike", "meaning": "不喜愛,厭惡", "example": "I strongly dislike eating raw onions in my fresh salad."},
+  {"word": "ditch", "meaning": "水溝;壕溝", "example": "The heavy rainstorm filled the roadside drainage ditch with water."},
+  {"word": "dive", "meaning": "跳水;潛水", "example": "She wore high-quality goggles before diving into the swimming pool."},
+  {"word": "dock", "meaning": "碼頭", "example": "The luxury cruise ship docked safely at the harbor this morning."},
+  {"word": "dodge", "meaning": "閃開,躲開", "example": "The agile player successfully managed to dodge the flying ball."},
+  {"word": "domestic", "meaning": "家庭的;國內的", "example": "The agency handles both domestic flights and international travel plans."},
+  {"word": "dose", "meaning": "一劑", "example": "The doctor instructed him to take a single dose of medicine before bed."},
+  {"word": "doubtful", "meaning": "懷疑的", "example": "She felt highly doubtful about the reliability of the online news report."},
+  {"word": "drain", "meaning": "排出(液體)", "example": "Please drain the hot water from the freshly boiled pasta."},
+  {"word": "dramatic", "meaning": "戲劇性的", "example": "The company experienced a dramatic increase in sales last quarter."},
+  {"word": "drip", "meaning": "滴(下)", "example": "I could hear the steady drip of a leaking kitchen pipe."},
+  {"word": "drown", "meaning": "淹死;溺死", "example": "The brave lifeguard saved the drowning boy from the strong wave."},
+  {"word": "drowsy", "meaning": "昏昏欲睡的", "example": "The heavy lunch combined with the hot room made him feel drowsy."},
+  {"word": "drunk", "meaning": "喝醉的", "example": "He lost his car keys because he was completely drunk last night."},
+  {"word": "due", "meaning": "到期的", "example": "The monthly electricity bill is due by the end of next week."},
+  {"word": "dump", "meaning": "傾倒", "example": "It is illegal to dump domestic garbage on the mountain roads."},
+  {"word": "dust", "meaning": "灰塵", "example": "A thick layer of grey dust covered the old unused books."},
+  
+  {"word": "eager", "meaning": "急切的;熱心的", "example": "The students are highly eager to start their science experiment."},
+  {"word": "earnings", "meaning": "收入", "example": "His monthly earnings increased significantly after his promotion."},
+  {"word": "echo", "meaning": "回聲", "example": "Our loud voices echoed through the empty mountain cave."},
+  {"word": "edit", "meaning": "編輯", "example": "She had to carefully edit the article before submitting it to the publisher."},
+  {"word": "edition", "meaning": "版本", "example": "I purchased the latest edition of the software to get new features."},
+  {"word": "editor", "meaning": "編輯", "example": "The newspaper editor decided to place the story on the front page."},
+  {"word": "educate", "meaning": "教育", "example": "Schools aim to educate young minds and cultivate critical thinking."},
+  {"word": "educational", "meaning": "教育的", "example": "The documentary was highly educational and engaging for all age groups."},
+  {"word": "efficient", "meaning": "效率高的", "example": "We need an efficient database system to store client information."},
+  {"word": "elbow", "meaning": "手肘", "example": "I accidentally hit my elbow against the edge of the dining table."},
+  {"word": "elderly", "meaning": "年長的", "example": "We must show respect and offer help to elderly citizens in public."},
+  {"word": "election", "meaning": "選舉", "example": "The democratic presidential election will take place next month."},
+  {"word": "electric", "meaning": "電的;電動的", "example": "He bought an electric car to reduce his daily fuel costs."},
+  {"word": "electricity", "meaning": "電", "example": "The sudden power outage cut off electricity to the entire district."},
+  {"word": "electronic", "meaning": "電子的", "example": "E-books are modern electronic alternatives to traditional paper books."},
+  {"word": "emergency", "meaning": "緊急情況", "example": "Please dial the emergency number immediately if a fire breaks out."},
+  {"word": "emperor", "meaning": "皇帝", "example": "The first emperor of the ancient dynasty built the historical palace."},
+  {"word": "emphasize", "meaning": "強調", "example": "The teacher decided to emphasize the importance of review before exams."},
+  {"word": "employ", "meaning": "僱用;使用", "example": "The new tech factory plans to employ over three hundred local workers."},
+  {"word": "employment", "meaning": "僱用;工作", "example": "Finding stable employment can be difficult in a slow economy."},
+  {"word": "employee", "meaning": "雇員", "example": "The company offers a generous benefits package to every employee."},
+  {"word": "employer", "meaning": "僱主", "example": "A good employer values and rewards the hard work of their team."},
+  {"word": "empty", "meaning": "空的", "example": "The water bottle was completely empty, so I went to fill it."},
+  {"word": "enable", "meaning": "使能夠", "example": "The new update will enable users to share files much faster."},
+  {"word": "energetic", "meaning": "精力旺盛的", "example": "The energetic puppy ran around the garden without stopping once."},
+  {"word": "engagement", "meaning": "訂婚", "example": "They announced their marriage engagement to friends at the dinner party."},
+  {"word": "engine", "meaning": "引擎", "example": "The mechanic checked the car engine to find the cause of the noise."},
+  {"word": "engineer", "meaning": "工程師", "example": "He works as a senior software engineer at a famous tech company."},
+  {"word": "enjoyable", "meaning": "快樂的;有樂趣的", "example": "We had a highly enjoyable picnic near the lake last weekend."},
+  {"word": "entry", "meaning": "進入;入口", "example": "The guard requested our ID cards before granting entry to the facility."},
+  {"word": "environmental", "meaning": "環境的", "example": "We must take immediate action to address global environmental issues."},
+  {"word": "envy", "meaning": "妒忌;羨慕", "example": "I envy your ability to speak four foreign languages so fluently."},
+  {"word": "erase", "meaning": "擦掉,抹去", "example": "She used a rubber to erase the spelling mistake in her notebook."},
+  {"word": "escape", "meaning": "逃跑;逃脫", "example": "The small hamster managed to escape from its cage during the night."},
+  {"word": "evil", "meaning": "邪惡的;邪惡", "example": "The ancient story tells the classic battle between good and evil."},
+  {"word": "excellence", "meaning": "優秀;卓越", "example": "The school has a long reputation for academic and athletic excellence."},
+  {"word": "exchange", "meaning": "交換", "example": "The tourists went to the bank to exchange their currency for Yen."},
+  {"word": "exhibition", "meaning": "展覽", "example": "We went to the art museum to see the new photography exhibition."},
+  {"word": "existence", "meaning": "存在", "example": "Scientists are searching for evidence of water to confirm life's existence."},
+  {"word": "exit", "meaning": "出口", "example": "The theater has clearly marked emergency exits on both sides."},
+  {"word": "expectation", "meaning": "期待;預期", "example": "The company's new smartphone model exceeded all market expectations."},
+  {"word": "expense", "meaning": "費用;經費", "example": "Travel expenses will be fully reimbursed by the company manager."},
+  {"word": "experiment", "meaning": "實驗;試驗", "example": "The chemistry students performed a fascinating experiment in the lab today."},
+  {"word": "explode", "meaning": "爆炸", "example": "The active volcano is expected to explode with lava at any moment."},
+  {"word": "export", "meaning": "輸出,出口", "example": "The country exports millions of tons of fresh fruit every year."},
+  {"word": "expression", "meaning": "表達;表情", "example": "A warm expression of gratitude can make someone's entire day better."},
+  {"word": "expressive", "meaning": "表情豐富的", "example": "She has an incredibly expressive face that shows all her emotions."},
+  {"word": "extreme", "meaning": "極端的", "example": "Mountain hikers must prepare thoroughly for extreme weather conditions."},
+  
+  {"word": "fable", "meaning": "寓言", "example": "Aesop's fables teach valuable moral lessons using animal characters."},
+  {"word": "factor", "meaning": "因素", "example": "Regular physical exercise is a key factor in maintaining robust health."},
+  {"word": "fade", "meaning": "凋謝;褪色", "example": "The vibrant colors of the old painting started to fade over time."},
+  {"word": "faint", "meaning": "頭暈的;昏厥", "example": "She felt faint due to dehydration and sat down in the shade."},
+  {"word": "fairly", "meaning": "公平地;相當地", "example": "The new apartment is fairly close to the subway station."},
+  {"word": "fairy", "meaning": "仙女;小妖精", "example": "The young children loved reading bedtime stories about forest fairies."},
+  {"word": "faith", "meaning": "信念;信任", "example": "Maintaining absolute faith in yourself can help you survive hard times."},
+  {"word": "fake", "meaning": "偽造;捏造", "example": "The museum expert confirmed that the expensive painting was fake."},
+  {"word": "familiar", "meaning": "熟悉的;常見的", "example": "The street corner looked familiar, but I couldn't remember its name."},
+  {"word": "fancy", "meaning": "愛好;精緻的", "example": "They decided to celebrate their anniversary at a fancy restaurant."},
+  {"word": "fare", "meaning": "票價;車費", "example": "Please prepare the correct bus fare before boarding the vehicle."},
+  {"word": "farther", "meaning": "更遠地", "example": "We had to hike much farther up the mountain than we planned."},
+  {"word": "fashion", "meaning": "流行式樣;時尚", "example": "Paris is known worldwide as the global capital of high fashion."},
+  {"word": "fashionable", "meaning": "流行的;時髦的", "example": "She wore an incredibly fashionable black dress to the party."},
+  {"word": "fasten", "meaning": "紮牢;繫緊", "example": "Please fasten your seatbelt securely before the plane takes off."},
+  {"word": "fate", "meaning": "命運", "example": "The historical novel explores how war dramatically altered the character's fate."},
+  {"word": "faucet", "meaning": "水龍頭", "example": "The kitchen faucet is leaking water, so we must replace it."},
+  {"word": "fist", "meaning": "拳頭", "example": "He clenched his right fist tightly to show his determination."},
+  {"word": "flame", "meaning": "火焰", "example": "A bright orange flame rose from the dry wood campfire."},
+  {"word": "flavor", "meaning": "味道;風味", "example": "This specialty ice cream has a delicious natural vanilla flavor."},
+  {"word": "flea", "meaning": "跳蚤", "example": "We took our pet dog to the vet to get rid of fleas."},
+  {"word": "flesh", "meaning": "肉,肌肉", "example": "The ripe peach had sweet, soft, and juicy yellow flesh."},
+  {"word": "float", "meaning": "浮;漂浮", "example": "We watched the autumn leaves float quietly on the river water."},
+  {"word": "flock", "meaning": "群;聚集", "example": "A large flock of wild birds flew across the blue sky."},
+  {"word": "fold", "meaning": "摺疊", "example": "She sat on the bed and began to fold the clean laundry."},
+  {"word": "folk", "meaning": "人們;民間的", "example": "Traditional folk songs are a rich part of our country's culture."},
+  {"word": "follower", "meaning": "追隨者;信徒", "example": "The popular chef has millions of active followers on social media."},
+  {"word": "fond", "meaning": "喜歡的", "example": "My grandfather is highly fond of sharing stories of his youth."},
+  {"word": "forehead", "meaning": "額頭", "example": "She touched the sleeping baby's forehead to check for a fever."},
+  {"word": "forever", "meaning": "永遠", "example": "I will cherish this beautiful travel memory with you forever."},
+  {"word": "forth", "meaning": "向前", "example": "The pendulum of the clock swung back and forth steadily."},
+  {"word": "fortune", "meaning": "財富;幸運", "example": "He made a massive business fortune by investing in digital tech."},
+  {"word": "found", "meaning": "建立;創辦", "example": "The professors decided to found a new research institute next year."},
+  {"word": "fountain", "meaning": "噴泉;飲水機", "example": "A gorgeous stone fountain stood in the middle of the garden."},
+  {"word": "freeze", "meaning": "結冰;凍牢", "example": "The lake water is expected to freeze solid during the cold winter."},
+  {"word": "frequent", "meaning": "頻繁的", "example": "Regular and frequent review is the absolute key to memory retention."},
+  {"word": "friendship", "meaning": "友誼", "example": "Our deep school friendship has lasted for more than twenty years."},
+  {"word": "frustrate", "meaning": "使挫敗", "example": "The sudden software crash frustrated the designer who was editing files."},
+  {"word": "fry", "meaning": "油炸,油炒", "example": "She decided to fry some fresh potatoes to make crispy chips."},
+  {"word": "fund", "meaning": "資金,基金", "example": "The charity raised a massive fund to help orphan kids in need."},
+  {"word": "fur", "meaning": "毛皮", "example": "The thick white fur of the polar bear keeps it warm in winter."},
+  {"word": "furniture", "meaning": "傢俱[U]", "example": "We decided to purchase some new modern furniture for the office."},
+  
+  {"word": "gallon", "meaning": "加侖", "example": "He bought a gallon of organic milk from the local supermarket."},
+  {"word": "gamble", "meaning": "賭博;打賭", "example": "He lost a large portion of his savings in a risky gamble."},
+  {"word": "gang", "meaning": "一幫;一群", "example": "The local police arrested a notorious street gang yesterday."},
+  {"word": "gap", "meaning": "裂口,缺口", "example": "There is a significant gap between the old wall and the fence."},
+  {"word": "garlic", "meaning": "大蒜;蒜頭", "example": "The chef added minced garlic to the pasta sauce for extra flavor."},
+  {"word": "gasoline", "meaning": "汽油", "example": "We stopped at the highway gas station to fill up with gasoline."},
+  {"word": "gesture", "meaning": "姿勢;手勢", "example": "He waved his right hand as a friendly gesture of greeting."},
+  {"word": "glance", "meaning": "一瞥;掃視", "example": "She took a quick glance at her watch to check the current time."},
+  {"word": "global", "meaning": "全球的;球狀的", "example": "Climate change is a global issue that requires collaborative solutions."},
+  {"word": "glory", "meaning": "光榮,榮譽", "example": "The soldiers fought bravely to defend the freedom and glory of their nation."},
+  {"word": "glow", "meaning": "發光;灼熱", "example": "A soft golden glow emerged from the distant mountain cabin window."},
+  {"word": "gossip", "meaning": "八卦;閒話", "example": "The magazines are filled with unnecessary gossip about pop stars."},
+  {"word": "governor", "meaning": "州長", "example": "The state governor gave an inspiring speech on economic reforms."},
+  {"word": "gown", "meaning": "長禮服", "example": "She wore a gorgeous silk evening gown to the graduation ceremony."},
+  {"word": "grab", "meaning": "抓取", "example": "He grabbed his coat and ran out of the door to catch the train."},
+  {"word": "gradual", "meaning": "逐漸的,逐步的", "example": "Learning vocabulary is a gradual process that requires persistent practice."},
+  {"word": "graduate", "meaning": "畢業", "example": "She graduated from university with a first-class honors degree in law."},
+  {"word": "grain", "meaning": "穀粒", "example": "Wheat is a major grain cultivated extensively across the world."},
+  {"word": "gram", "meaning": "克", "example": "The package contained exactly five hundred grams of coffee beans."},
+  {"word": "grasp", "meaning": "抓牢;理解", "example": "She struggled to fully grasp the complex concepts of quantum physics."},
+  {"word": "grasshopper", "meaning": "蚱蜢;蝗蟲", "example": "A large green grasshopper jumped actively across the tall garden weeds."},
+  {"word": "greenhouse", "meaning": "溫室", "example": "The nursery cultivated delicate rare orchids inside a modern greenhouse."},
+  {"word": "grin", "meaning": "露齒而笑", "example": "A broad grin appeared on his face when he received the award."},
+  {"word": "grocery", "meaning": "食品雜貨", "example": "We went to the local grocery store to buy fresh vegetables."},
+  {"word": "guardian", "meaning": "保護者;監護人", "example": "Her uncle was appointed as her legal guardian after her parents passed away."},
+  {"word": "guidance", "meaning": "指導;引導", "example": "Students can consult teachers for professional guidance on career planning."},
+  {"word": "gum", "meaning": "口香糖", "example": "Chewing sugar-free gum can help clean teeth and refresh your breath."},
+  {"word": "gymnasium", "meaning": "體育館", "example": "The high school basketball match was held in the indoor gymnasium."},
+  {"word": "zipper", "meaning": "拉鍊", "example": "The zipper on my backpack broke, so I cannot close it properly."},
+  {"word": "zone", "meaning": "地帶;地區", "example": "Parking is strictly prohibited in this designated loading zone."}
 ];
