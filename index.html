@@ -8,6 +8,55 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  /* 輔助與排版修正樣式 */
+  .hidden-btn { display: none !important; }
+  .reminder-history-section { margin-top: 35px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
+  
+  /* 精美純 24H 時/分下拉選單樣式 */
+  .time-select-24h {
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    cursor: pointer;
+    min-width: 55px;
+  }
+  .time-select-24h:focus {
+    border-color: #e8a33d;
+    outline: none;
+  }
+  .time-group { display: flex; align-items: center; gap: 4px; }
+
+  /* 強制按鈕容器橫向排列，絕不擠壓變形 */
+  .fixed-action-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+  .fixed-action-row .btn {
+    white-space: nowrap !important;
+    flex: 0 0 auto !important;
+    padding: 10px 16px !important;
+  }
+
+  /* 鬧鈴響起時的「停止鬧鈴」按鈕，特別放大並帶有脈動動畫，讓人一眼就看到 */
+  #reminder-stop-music-btn {
+    animation: alarm-pulse 1s ease-in-out infinite;
+  }
+  @keyframes alarm-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(232,163,61,0.55); }
+    50% { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(232,163,61,0); }
+  }
+</style>
 </head>
 <body>
 
@@ -115,40 +164,48 @@
         <div class="reminder-panel">
           <div class="big-timer" id="reminder-big-timer">40:00</div>
           <div class="timer-label" id="reminder-timer-label">下一次提醒倒數</div>
-          <div class="panel-actions">
-            <button class="btn primary" id="reminder-toggle-btn">啟動提醒</button>
+          
+          <div class="fixed-action-row">
+            <button class="btn primary" id="reminder-start-btn">啟動提醒</button>
+            <button class="btn ghost hidden-btn" id="reminder-pause-btn">暫停提醒</button>
+            <button class="btn danger hidden-btn" id="reminder-stop-btn" style="background: #ff5f56; color: #fff;">結束提醒</button>
+            <!-- 鬧鈴響起時顯示：文字會依情境自動切換成「開始運動」或「開始上班」 -->
+            <button class="btn primary hidden-btn" id="reminder-stop-music-btn" style="background: #e8a33d; color: #121212;">🔕 停止鬧鈴</button>
             <button class="btn ghost" id="reminder-test-btn">測試提示音</button>
           </div>
         </div>
 
         <div class="reminder-config">
-          <h3>工作時段設定</h3>
-          <div class="config-row">
-            <label>上午時段</label>
-            <input type="time" id="morning-start" value="09:30">
+          <h3>工作時段設定 (24H制選單)</h3>
+          <div class="config-row" style="display: flex; align-items: center; gap: 10px;">
+            <label>允許提醒時段</label>
+            
+            <div class="time-group">
+              <select class="time-select-24h" id="window-start-hour"></select> 時
+              <select class="time-select-24h" id="window-start-min"></select> 分
+            </div>
+            
             <span>–</span>
-            <input type="time" id="morning-end" value="11:30">
-          </div>
-          <div class="config-row">
-            <label>下午時段</label>
-            <input type="time" id="afternoon-start" value="13:30">
-            <span>–</span>
-            <input type="time" id="afternoon-end" value="17:30">
+            
+            <div class="time-group">
+              <select class="time-select-24h" id="window-end-hour"></select> 時
+              <select class="time-select-24h" id="window-end-min"></select> 分
+            </div>
           </div>
           <div class="config-row">
             <label>提醒間隔</label>
-            <input type="number" id="interval-minutes" value="40" min="5" max="120" step="5"> 分鐘
+            <input type="number" id="interval-minutes" value="40" min="1" max="120" step="1"> 分鐘
           </div>
           <div class="config-row">
             <label>運動時長</label>
             <input type="number" id="exercise-minutes" value="5" min="1" max="30" step="1"> 分鐘
           </div>
-          <p class="hint">⚠️ 此為網頁計時，請保持分頁開啟才能持續提醒。</p>
+          <p class="hint">⚠️ 此為網頁計時，請保持分頁開啟才能持續提醒。工作時間到、或運動時間到，都會像鬧鐘一樣持續響鈴，按下「停止鬧鈴」後才會自動幫你倒數下一階段的時間（運動或上班）。</p>
         </div>
       </div>
 
       <div class="reminder-log">
-        <h3>今日提醒紀錄</h3>
+        <h3>今日動態日誌 (24H)</h3>
         <ul id="reminder-log-list"><li class="empty">尚無紀錄</li></ul>
       </div>
     </section>
@@ -186,29 +243,44 @@
       </div>
     </section>
 
-    <!-- 5. 歷史紀錄表 (拆分月份與日期雙選單) -->
+    <!-- 5. 歷史紀錄表 -->
     <section id="panel-history" class="panel">
       <header class="panel-head">
         <div>
-          <h1>歷史學習紀錄表</h1>
-          <p class="sub">回溯每日單字測驗的第一輪原始對錯、星期與學習花費總時間</p>
+          <h1>歷史數據中心</h1>
+          <p class="sub">追蹤並回溯您的每日單字測驗表現與起身運動時間軸</p>
         </div>
         <div class="filter-area" style="margin-top: 15px; display: flex; gap: 15px; flex-wrap: wrap;">
           <div>
-            <label for="history-month-select" style="font-size: 0.9rem; color: #aaa; margin-right: 8px;">月份：</label>
+            <label for="history-month-select" style="font-size: 0.9rem; color: #aaa; margin-right: 8px;">選擇月份：</label>
             <select id="history-month-select" style="background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-family: inherit; cursor: pointer; min-width: 120px;">
               <!-- JS 動態生成 -->
             </select>
           </div>
           <div>
-            <label for="history-date-select" style="font-size: 0.9rem; color: #aaa; margin-right: 8px;">日期：</label>
+            <label for="history-date-select" style="font-size: 0.9rem; color: #aaa; margin-right: 8px;">選擇日期：</label>
             <select id="history-date-select" style="background: #222; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; font-family: inherit; cursor: pointer; min-width: 180px;">
               <!-- JS 連動生成 -->
             </select>
           </div>
         </div>
       </header>
-      <div id="history-page-container"></div>
+
+      <!-- 起身提醒歷史紀錄表 -->
+      <div class="reminder-history-section">
+        <h2 style="font-size: 1.2rem; color: #e8a33d; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          <span>🏃‍♂️ 起身提醒歷史紀錄表</span>
+        </h2>
+        <div id="reminder-history-container"></div>
+      </div>
+
+      <!-- 單字歷史紀錄表 -->
+      <div style="margin-top: 35px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px;">
+        <h2 style="font-size: 1.2rem; color: #e8a33d; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+          <span>📝 單字測驗歷史紀錄表</span>
+        </h2>
+        <div id="history-page-container"></div>
+      </div>
     </section>
 
   </main>

@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initNav();
   initClock();
 
-  // 自訂 Toast 元件（代替原生 alert，安全、不卡死執行緒且精美）
   const showToast = (message, isError = false) => {
     const toast = document.createElement('div');
     toast.style.position = 'fixed';
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.body.appendChild(toast);
     
-    // 強制重繪觸發動畫
     setTimeout(() => {
       toast.style.transform = 'translateX(-50%) translateY(0)';
       toast.style.opacity = '1';
@@ -41,10 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const dateKey = vocabData.dateKey;
   const dayName = vocabData.dayName;
 
-  // 打開卡片那一刻，即刻啟動計時
   let studyStartTime = new Date();
 
-  // 設定週五複習介面或平日學習介面標題
   const badgeEl = document.getElementById('vocab-day-badge');
   const subTitleEl = document.querySelector('#panel-vocab .panel-head p.sub');
   
@@ -55,7 +51,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (badgeEl) badgeEl.textContent = `${dayName}單字`;
   }
 
-  // 渲染今日單字卡片
   Vocabulary.renderCards(document.getElementById('vocab-cards'));
 
   const startQuizBtn = document.getElementById('start-quiz-btn');
@@ -88,14 +83,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('vocab-quiz-view').classList.add('hidden');
     document.getElementById('vocab-result-view').classList.remove('hidden');
     
-    // 計算讀書至做完題目總耗時
     const endTime = new Date();
     const diffMs = endTime - studyStartTime;
     const diffMins = Math.floor(diffMs / 60000);
     const diffSecs = Math.floor((diffMs % 60000) / 1000);
     const durationText = `${diffMins} 分 ${diffSecs} 秒`;
 
-    // 儲存至 LocalStorage
     Vocabulary.saveDailyLog(dateKey, dayName, dailyRecord, durationText);
     
     const pct = Math.round((correctCount / totalCount) * 100) || 0;
@@ -105,11 +98,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (scoreText) scoreText.textContent = `${correctCount}/${totalCount}`;
     
     let msgs = `<b>🎉 恭喜通關！你已成功把今天的所有錯題重考複習完畢！</b><br>`;
-    msgs += `<small style="color:#aaa;">本次從記憶單字到完成測驗，共花費時間：${durationText}</small><br><br>`;
+    msgs += `<small style="color:#aaa;">本次共花費時間：${durationText}</small><br><br>`;
     if (pct === 100) {
       msgs += '滿分！第一輪就完全答對，太強了！☀️';
     } else {
-      msgs += '太棒了！雖然初測有錯題，但你剛剛已經透過「變換題型」全部複習答對了！結果已寫入紀錄大表。💪';
+      msgs += '太棒了！雖然初測有錯題，但你剛剛已經透過「變換題型」全部複習答對了！💪';
     }
     const resultMsgEl = document.getElementById('result-message');
     if (resultMsgEl) resultMsgEl.innerHTML = msgs;
@@ -121,15 +114,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (navHistoryBtn) {
     navHistoryBtn.addEventListener('click', () => {
-      initMonthDropdown();
-      updateDateDropdown();
+      initCombinedDropdowns();
       renderHistoryPage();
     });
   }
 
   if (monthSelect) {
     monthSelect.addEventListener('change', () => {
-      updateDateDropdown();
+      updateDateDropdownOnly();
       renderHistoryPage();
     });
   }
@@ -140,24 +132,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  function initMonthDropdown() {
+  function initCombinedDropdowns() {
     if (!monthSelect) return;
-    const allLogs = Vocabulary.getAllLogs();
     const monthsSet = new Set();
 
-    allLogs.forEach(log => {
-      if (log.date && log.date.length >= 7) {
-        monthsSet.add(log.date.substring(0, 7)); 
-      }
+    Vocabulary.getAllLogs().forEach(log => {
+      if (log.date && log.date.length >= 7) monthsSet.add(log.date.substring(0, 7));
     });
+
+    if (typeof Reminder !== 'undefined' && Reminder.getAllReminderLogs) {
+      Reminder.getAllReminderLogs().forEach(log => {
+        if (log.date && log.date.length >= 7) monthsSet.add(log.date.substring(0, 7));
+      });
+    }
+
+    if (monthsSet.size === 0) {
+      const now = new Date();
+      const thisMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+      monthsSet.add(thisMonth);
+    }
 
     const sortedMonths = Array.from(monthsSet).sort((a, b) => b.localeCompare(a));
     const currentSelected = monthSelect.value;
-
-    if (sortedMonths.length === 0) {
-      monthSelect.innerHTML = `<option value="">尚無紀錄</option>`;
-      return;
-    }
 
     monthSelect.innerHTML = sortedMonths.map(m => {
       const parts = m.split('-');
@@ -169,24 +165,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       monthSelect.value = sortedMonths[0];
     }
+
+    updateDateDropdownOnly();
   }
 
-  function updateDateDropdown() {
+  function updateDateDropdownOnly() {
     if (!monthSelect || !dateSelect) return;
-    const allLogs = Vocabulary.getAllLogs();
     const targetMonth = monthSelect.value;
+    if (!targetMonth) return;
 
-    if (!targetMonth) {
-      dateSelect.innerHTML = `<option value="">尚無資料</option>`;
-      return;
+    const datesSet = new Set();
+
+    Vocabulary.getAllLogs().forEach(log => {
+      if (log.date && log.date.startsWith(targetMonth)) datesSet.add(log.date);
+    });
+
+    if (typeof Reminder !== 'undefined' && Reminder.getAllReminderLogs) {
+      Reminder.getAllReminderLogs().forEach(log => {
+        if (log.date && log.date.startsWith(targetMonth)) datesSet.add(log.date);
+      });
     }
 
-    const monthlyLogs = allLogs.filter(log => log.date && log.date.startsWith(targetMonth));
+    const sortedDates = Array.from(datesSet).sort((a, b) => b.localeCompare(a));
     let optionsHtml = `<option value="ALL_MONTH">-- 顯示整月所有紀錄 --</option>`;
     
-    optionsHtml += monthlyLogs.map(log => {
-      const dayNum = log.date.split('-')[2]; 
-      return `<option value="${log.date}">${dayNum}日 (${log.dayName || '測驗日'})</option>`;
+    optionsHtml += sortedDates.map(dt => {
+      const dayNum = dt.split('-')[2]; 
+      return `<option value="${dt}">${dayNum}日</option>`;
     }).join('');
 
     dateSelect.innerHTML = optionsHtml;
@@ -202,52 +207,49 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (allLogs.length === 0 || !targetMonth) {
       container.innerHTML = `
-        <div style="text-align:center; padding:50px; color:#666; font-size:1.1rem;">
-          📭 目前還沒有任何測驗歷史紀錄。<br>當你完成測驗後，報表會自動產出於此處！
+        <div style="text-align:center; padding:30px; color:#666; font-size:0.95rem;">
+          📭 目前尚無任何單字測驗歷史紀錄。
         </div>`;
       return;
     }
 
     let logsToRender = [];
-
-    // 判斷選單邏輯：選月份秀全月，選日期秀單日
     if (targetDate === "ALL_MONTH" || !targetDate) {
       logsToRender = allLogs.filter(log => log.date && log.date.startsWith(targetMonth));
     } else {
-      const singleLog = allLogs.find(l => l.date === targetDate);
-      if (singleLog) logsToRender.push(singleLog);
+      logsToRender = allLogs.filter(log => log.date === targetDate);
     }
 
     if (logsToRender.length === 0) {
-      container.innerHTML = `<div style="text-align:center; padding:30px; color:#777;">該時段無單字紀錄。</div>`;
+      container.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">該選擇時段內無單字紀錄。</div>`;
       return;
     }
 
     container.innerHTML = logsToRender.map(log => `
-      <div style="margin-bottom: 30px; padding: 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px;">
-        <h3 style="margin-bottom: 12px; font-size: 1.05rem; color: #e8a33d; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-          <span>📅 日期：${log.date} (${log.dayName || '未知'})</span>
-          <span style="font-size:0.85em; color:#aaa; font-weight:normal;">⏱️ 開始讀到測驗完成總用時：<b style="color:#fff;">${log.duration || '計時有誤'}</b></span>
+      <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px;">
+        <h3 style="margin-bottom: 12px; font-size: 1.01rem; color: #e8a33d; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+          <span>📅 日期：${log.date} (${log.dayName || '測驗日'})</span>
+          <span style="font-size:0.85em; color:#aaa; font-weight:normal;">⏱️ 總用時：<b style="color:#fff;">${log.duration || '未計時'}</b></span>
         </h3>
         <table style="width:100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
           <thead>
-            <tr style="border-bottom: 2px solid rgba(255,255,255,0.15); color: #aaa;">
-              <th style="padding:10px 8px; width:40%;">單字 (Word)</th>
-              <th style="padding:10px 8px; width:30%;">第一輪初測</th>
-              <th style="padding:10px 8px; width:30%;">最終狀態</th>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.15); color: #aaa;">
+              <th style="padding:6px 4px; width:40%;">單字 (Word)</th>
+              <th style="padding:6px 4px; width:30%;">第一輪初測</th>
+              <th style="padding:6px 4px; width:30%;">最終狀態</th>
             </tr>
           </thead>
           <tbody>
             ${log.details.map(item => `
-              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <td style="padding:12px 8px;"><strong>${item.word}</strong></td>
-                <td style="padding:12px 8px;">
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                <td style="padding:8px 4px;"><strong>${item.word}</strong></td>
+                <td style="padding:8px 4px;">
                   ${item.correct 
                     ? '<span style="color:#4caf50; font-weight:600;">✔ (對)</span>' 
                     : '<span style="color:#ff5f56; font-weight:600;">❌ (錯)</span>'}
                 </td>
-                <td style="padding:12px 8px;">
-                  <span style="color:#4caf50;">✔ 已藉由變換重考背熟</span>
+                <td style="padding:8px 4px;">
+                  <span style="color:#4caf50;">✔ 已全部重考複習完畢</span>
                 </td>
               </tr>
             `).join('')}
@@ -257,7 +259,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-  // 其餘模組初始化
   if (typeof Reminder !== 'undefined') Reminder.init();
   if (typeof Exchange !== 'undefined') Exchange.init();
   if (typeof Music !== 'undefined') Music.init();
@@ -283,10 +284,16 @@ function initClock() {
 
   function update() {
     const now = new Date();
-    if (clockEl) clockEl.textContent = now.toLocaleTimeString('zh-TW', { hour12: false });
-    if (dateEl) dateEl.textContent = now.toLocaleDateString('zh-TW', {
-      year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short'
-    });
+    const hh = now.getHours().toString().padStart(2, '0');
+    const mm = now.getMinutes().toString().padStart(2, '0');
+    const ss = now.getSeconds().toString().padStart(2, '0');
+    
+    if (clockEl) clockEl.textContent = `${hh}:${mm}:${ss}`;
+    if (dateEl) {
+      dateEl.textContent = now.toLocaleDateString('zh-TW', {
+        year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short'
+      });
+    }
   }
   update();
   setInterval(update, 1000);
